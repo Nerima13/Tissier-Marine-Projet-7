@@ -1,15 +1,31 @@
 package com.nnk.springboot.domain;
 
-import org.hibernate.validator.constraints.Length;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
 import java.sql.Timestamp;
 
-
 @Entity
-@Table(name = "curvepoint")
+@Table(name = "CurvePoint")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CurvePoint {
-    // TODO: Map columns in data table CURVEPOINT with corresponding java fields
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id")
+    private Integer id;
+
+    private Integer curveId;
+
+    private Timestamp asOfDate;
+
+    @Digits(integer = 10, fraction = 2)
+    private Double term;
+
+    @Digits(integer = 10, fraction = 2)
+    private Double value;
+
+    private Timestamp creationDate;
 }

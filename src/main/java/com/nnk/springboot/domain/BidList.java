@@ -1,15 +1,85 @@
 package com.nnk.springboot.domain;
 
-import org.springframework.beans.factory.annotation.Required;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Digits;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotBlank;
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "bidlist")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BidList {
-    // TODO: Map columns in data table BIDLIST with corresponding java fields
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "BidListId")
+    private Integer bidListId;
+
+    @NotBlank(message = "Account is mandatory")
+    @Size(max = 30)
+    @Column(nullable = false, length = 30)
+    private String account;
+
+    @NotBlank(message = "Type is mandatory")
+    @Size(max = 30)
+    @Column(nullable = false, length = 30)
+    private String type;
+
+    @Digits(integer = 10, fraction = 2)
+    private Double bidQuantity;
+
+    @Digits(integer = 10, fraction = 2)
+    private Double askQuantity;
+
+    private Double bid;
+    private Double ask;
+
+    @Size(max = 125)
+    private String benchmark;
+
+    private Timestamp bidListDate;
+
+    @Size(max = 125)
+    private String commentary;
+
+    @Size(max = 125)
+    private String security;
+
+    @Size(max = 10)
+    private String status;
+
+    @Size(max = 125)
+    private String trader;
+
+    @Size(max = 125)
+    private String book;
+
+    @Size(max = 125)
+    private String creationName;
+
+    private Timestamp creationDate;
+
+    @Size(max = 125)
+    private String revisionName;
+
+    private Timestamp revisionDate;
+
+    @Size(max = 125)
+    private String dealName;
+
+    @Size(max = 125)
+    private String dealType;
+
+    @Size(max = 125)
+    private String sourceListId;
+
+    @Size(max = 125)
+    private String side;
 }
