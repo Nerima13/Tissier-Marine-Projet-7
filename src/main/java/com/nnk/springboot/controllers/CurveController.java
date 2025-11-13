@@ -10,24 +10,47 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
+/**
+ * Controller handling CRUD operations for {@link CurvePoint}.
+ * Provides routes to list, add, update, and delete CurvePoint entries.
+ */
 @Controller
 @RequiredArgsConstructor
 public class CurveController {
 
     private final CurveService curveService;
 
+    /**
+     * Displays the list of all CurvePoint entries.
+     *
+     * @param model the model used to pass data to the view
+     * @return the list view
+     */
     @RequestMapping("/curvePoint/list")
     public String home(Model model) {
         model.addAttribute("curvePoints", curveService.findAll());
         return "curvePoint/list";
     }
 
+    /**
+     * Displays the form to add a new CurvePoint.
+     *
+     * @param model the model used to pass data to the view
+     * @return the add form view
+     */
     @GetMapping("/curvePoint/add")
     public String addBidForm(Model model) {
         model.addAttribute("curvePoint", new CurvePoint());
         return "curvePoint/add";
     }
 
+    /**
+     * Validates and saves a new CurvePoint entry.
+     *
+     * @param curvePoint the CurvePoint submitted from the form
+     * @param result validation result
+     * @return redirect to the list view if successful, otherwise return the form
+     */
     @PostMapping("/curvePoint/validate")
     public String validate(@Valid @ModelAttribute("curvePoint") CurvePoint curvePoint,
                            BindingResult result,
@@ -39,6 +62,13 @@ public class CurveController {
         return "redirect:/curvePoint/list";
     }
 
+    /**
+     * Displays the form to update an existing CurvePoint.
+     *
+     * @param id the ID of the CurvePoint to update
+     * @param model the model used to pass data to the view
+     * @return the update form view
+     */
     @GetMapping("/curvePoint/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         CurvePoint existing = curveService.findById(id);
@@ -46,6 +76,14 @@ public class CurveController {
         return "curvePoint/update";
     }
 
+    /**
+     * Validates and updates an existing CurvePoint entry.
+     *
+     * @param id the ID of the CurvePoint being updated
+     * @param curvePoint the updated data submitted from the form
+     * @param result validation result
+     * @return redirect to the list view if successful, otherwise return the form
+     */
     @PostMapping("/curvePoint/update/{id}")
     public String updateBid(@PathVariable("id") Integer id,
                             @Valid @ModelAttribute("curvePoint") CurvePoint curvePoint,
@@ -58,6 +96,12 @@ public class CurveController {
         return "redirect:/curvePoint/list";
     }
 
+    /**
+     * Deletes a CurvePoint entry by its ID.
+     *
+     * @param id the ID of the CurvePoint to delete
+     * @return redirect to the list view
+     */
     @GetMapping("/curvePoint/delete/{id}")
     public String deleteBid(@PathVariable("id") Integer id) {
         curveService.delete(id);

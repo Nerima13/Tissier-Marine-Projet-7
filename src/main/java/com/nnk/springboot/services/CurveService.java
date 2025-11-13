@@ -10,41 +10,75 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+/**
+ * Service layer for managing {@link CurvePoint} entities.
+ * Provides basic CRUD operations for the CurvePoint domain.
+ */
 @Service
 @RequiredArgsConstructor
 public class CurveService {
 
     private final CurvePointRepository repository;
 
-    // Retrieve all curve points
+    /**
+     * Retrieves all CurvePoint entries.
+     *
+     * @return list of CurvePoint entities
+     */
     public List<CurvePoint> findAll() {
         return repository.findAll();
     }
 
-    // Retrieve a curve point by its ID
+    /**
+     * Retrieves a CurvePoint by its ID.
+     *
+     * @param id the CurvePoint ID
+     * @return the corresponding CurvePoint entity
+     * @throws ResponseStatusException if not found (404)
+     */
     public CurvePoint findById(Integer id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "CurvePoint not found with id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(
+                        NOT_FOUND, "CurvePoint not found with id: " + id));
     }
 
-    // Create a new curve point
+    /**
+     * Creates a new CurvePoint entry.
+     *
+     * @param curvePoint the CurvePoint to create
+     * @return the saved CurvePoint entity
+     */
     public CurvePoint create(CurvePoint curvePoint) {
-        curvePoint.setId(null);  // Safety check : ensure we are creating a new entry
+        curvePoint.setId(null); // ensure a new entry
         return repository.save(curvePoint);
     }
 
-    // Update an existing curve point
+    /**
+     * Updates an existing CurvePoint entry.
+     *
+     * @param id the ID of the CurvePoint to update
+     * @param curvePoint data to apply to the update
+     * @return the updated CurvePoint entity
+     * @throws ResponseStatusException if the CurvePoint does not exist
+     */
     public CurvePoint update(Integer id, CurvePoint curvePoint) {
         CurvePoint existing = findById(id);
+
         existing.setCurveId(curvePoint.getCurveId());
         existing.setAsOfDate(curvePoint.getAsOfDate());
         existing.setTerm(curvePoint.getTerm());
         existing.setValue(curvePoint.getValue());
         existing.setCreationDate(curvePoint.getCreationDate());
+
         return repository.save(existing);
     }
 
-    // Delete a curve point
+    /**
+     * Deletes a CurvePoint by its ID.
+     *
+     * @param id the ID of the CurvePoint to delete
+     * @throws ResponseStatusException if the CurvePoint does not exist
+     */
     public void delete(Integer id) {
         CurvePoint existing = findById(id);
         repository.delete(existing);

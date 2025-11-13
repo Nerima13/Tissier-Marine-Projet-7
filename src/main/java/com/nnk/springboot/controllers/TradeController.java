@@ -9,24 +9,47 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+/**
+ * Controller handling CRUD operations for {@link Trade}.
+ * Provides routes to list, add, update, and delete Trade entries.
+ */
 @Controller
 @RequiredArgsConstructor
 public class TradeController {
 
     private final TradeService tradeService;
 
+    /**
+     * Displays the list of all Trade entries.
+     *
+     * @param model the model used to pass data to the view
+     * @return the list view
+     */
     @RequestMapping("/trade/list")
     public String home(Model model) {
         model.addAttribute("trades", tradeService.findAll());
         return "trade/list";
     }
 
+    /**
+     * Displays the form to add a new Trade.
+     *
+     * @param model the model used to pass data to the view
+     * @return the add form view
+     */
     @GetMapping("/trade/add")
     public String addUser(Model model) {
         model.addAttribute("trade", new Trade());
         return "trade/add";
     }
 
+    /**
+     * Validates and saves a new Trade entry.
+     *
+     * @param trade the Trade submitted from the form
+     * @param result validation result
+     * @return redirect to the list view if successful, otherwise return the form
+     */
     @PostMapping("/trade/validate")
     public String validate(@Valid @ModelAttribute("trade") Trade trade,
                            BindingResult result,
@@ -38,6 +61,13 @@ public class TradeController {
         return "redirect:/trade/list";
     }
 
+    /**
+     * Displays the form to update an existing Trade.
+     *
+     * @param id the ID of the Trade to update
+     * @param model the model used to pass data to the view
+     * @return the update form view
+     */
     @GetMapping("/trade/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         Trade existing = tradeService.findById(id);
@@ -45,6 +75,14 @@ public class TradeController {
         return "trade/update";
     }
 
+    /**
+     * Validates and updates an existing Trade entry.
+     *
+     * @param id the ID of the Trade being updated
+     * @param trade the updated data submitted from the form
+     * @param result validation result
+     * @return redirect to the list view if successful, otherwise return the form
+     */
     @PostMapping("/trade/update/{id}")
     public String updateTrade(@PathVariable("id") Integer id,
                               @Valid @ModelAttribute("trade") Trade trade,
@@ -57,6 +95,12 @@ public class TradeController {
         return "redirect:/trade/list";
     }
 
+    /**
+     * Deletes a Trade entry by its ID.
+     *
+     * @param id the ID of the Trade to delete
+     * @return redirect to the list view
+     */
     @GetMapping("/trade/delete/{id}")
     public String deleteTrade(@PathVariable("id") Integer id) {
         tradeService.delete(id);

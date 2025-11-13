@@ -28,13 +28,16 @@ public class Trade {
     @Column(nullable = false, length = 30)
     private String type;
 
-    @Digits(integer = 10, fraction = 2)
+    @Digits(integer = 10, fraction = 2, message = "Buy Quantity must contain only digits")
     private Double buyQuantity;
 
-    @Digits(integer = 10, fraction = 2)
+    @Digits(integer = 10, fraction = 2, message = "Sell Quantity must contain only digits")
     private Double sellQuantity;
 
+    @Digits(integer = 10, fraction = 2, message = "Buy Price must contain only digits")
     private Double buyPrice;
+
+    @Digits(integer = 10, fraction = 2, message = "Sell Price must contain only digits")
     private Double sellPrice;
 
     private Timestamp tradeDate;

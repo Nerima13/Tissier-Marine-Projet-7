@@ -12,12 +12,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Custom implementation of {@link UserDetailsService} used by Spring Security
+ * to load user information from the database during authentication.
+ *
+ * <p>This service retrieves a {@link User} by username, validates its role,
+ * and converts it into a Spring Security {@link UserDetails} object.</p>
+ */
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    /**
+     * Loads a user by its username and converts it to a {@link UserDetails} instance.
+     *
+     * @param username the username provided during login
+     * @return the authenticated user's details
+     * @throws UsernameNotFoundException if the user does not exist or has no valid role
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // Retrieve the user from the database (username must be unique)
@@ -37,7 +51,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())      // already encrypted with BCrypt in the database
-                .authorities(authorities)          // ex: ROLE_ADMIN / ROLE_USER
+                .authorities(authorities)          // ex : ROLE_ADMIN / ROLE_USER
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)
@@ -45,3 +59,4 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .build();
     }
 }
+

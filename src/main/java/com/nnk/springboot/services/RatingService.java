@@ -10,40 +10,75 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+/**
+ * Service layer for managing {@link Rating} entities.
+ * Provides CRUD operations and centralizes business logic
+ * related to the Rating domain.
+ */
 @Service
 @RequiredArgsConstructor
 public class RatingService {
 
     private final RatingRepository repository;
 
-    // Retrieve all ratings
+    /**
+     * Retrieves all Rating entries.
+     *
+     * @return list of Rating entities
+     */
     public List<Rating> findAll() {
         return repository.findAll();
     }
 
-    // Retrieve a rating by its ID
+    /**
+     * Retrieves a Rating by its ID.
+     *
+     * @param id the Rating ID
+     * @return the corresponding Rating entity
+     * @throws ResponseStatusException if not found (404)
+     */
     public Rating findById(Integer id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Rating not found with id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(
+                        NOT_FOUND, "Rating not found with id: " + id));
     }
 
-    // Create a new rating
+    /**
+     * Creates a new Rating entry.
+     *
+     * @param rating the Rating to create
+     * @return the saved Rating entity
+     */
     public Rating create(Rating rating) {
-        rating.setId(null); // ensure creation
+        rating.setId(null); // ensure creation of a new entry
         return repository.save(rating);
     }
 
-    // Update an existing rating
+    /**
+     * Updates an existing Rating entry.
+     *
+     * @param id the ID of the Rating to update
+     * @param rating the updated Rating data
+     * @return the updated Rating entity
+     * @throws ResponseStatusException if the Rating does not exist
+     */
     public Rating update(Integer id, Rating rating) {
         Rating existing = findById(id);
+
         existing.setMoodysRating(rating.getMoodysRating());
         existing.setSandPRating(rating.getSandPRating());
         existing.setFitchRating(rating.getFitchRating());
         existing.setOrderNumber(rating.getOrderNumber());
+
         return repository.save(existing);
     }
 
-    // Delete a rating by its ID
+    /**
+     * Deletes a Rating by its ID.
+     *
+     * @param id the ID of the Rating to delete
+     * @throws ResponseStatusException if the Rating does not exist
+     */
     public void delete(Integer id) {
         Rating existing = findById(id);
         repository.delete(existing);

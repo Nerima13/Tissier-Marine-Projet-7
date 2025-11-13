@@ -10,24 +10,47 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
+/**
+ * Controller handling CRUD operations for {@link Rating}.
+ * Provides routes to list, add, update, and delete Rating entries.
+ */
 @Controller
 @RequiredArgsConstructor
 public class RatingController {
 
     private final RatingService ratingService;
 
+    /**
+     * Displays the list of all Rating entries.
+     *
+     * @param model the model used to pass data to the view
+     * @return the list view
+     */
     @RequestMapping("/rating/list")
     public String home(Model model) {
         model.addAttribute("ratings", ratingService.findAll());
         return "rating/list";
     }
 
+    /**
+     * Displays the form to add a new Rating.
+     *
+     * @param model the model used to pass data to the view
+     * @return the add form view
+     */
     @GetMapping("/rating/add")
     public String addRatingForm(Model model) {
         model.addAttribute("rating", new Rating());
         return "rating/add";
     }
 
+    /**
+     * Validates and saves a new Rating entry.
+     *
+     * @param rating the Rating submitted from the form
+     * @param result validation result
+     * @return redirect to the list view if successful, otherwise return the form
+     */
     @PostMapping("/rating/validate")
     public String validate(@Valid @ModelAttribute("rating") Rating rating,
                            BindingResult result,
@@ -39,6 +62,13 @@ public class RatingController {
         return "redirect:/rating/list";
     }
 
+    /**
+     * Displays the form to update an existing Rating.
+     *
+     * @param id the ID of the Rating to update
+     * @param model the model used to pass data to the view
+     * @return the update form view
+     */
     @GetMapping("/rating/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         Rating existing = ratingService.findById(id);
@@ -46,6 +76,14 @@ public class RatingController {
         return "rating/update";
     }
 
+    /**
+     * Validates and updates an existing Rating entry.
+     *
+     * @param id the ID of the Rating being updated
+     * @param rating the updated data submitted from the form
+     * @param result validation result
+     * @return redirect to the list view if successful, otherwise return the form
+     */
     @PostMapping("/rating/update/{id}")
     public String updateRating(@PathVariable("id") Integer id,
                                @Valid @ModelAttribute("rating") Rating rating,
@@ -58,6 +96,12 @@ public class RatingController {
         return "redirect:/rating/list";
     }
 
+    /**
+     * Deletes a Rating entry by its ID.
+     *
+     * @param id the ID of the Rating to delete
+     * @return redirect to the list view
+     */
     @GetMapping("/rating/delete/{id}")
     public String deleteRating(@PathVariable("id") Integer id) {
         ratingService.delete(id);

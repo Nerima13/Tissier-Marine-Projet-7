@@ -25,5 +25,6 @@ public class Rating {
     @Size(max = 125)
     private String fitchRating;
 
+    @Digits(integer = 10, fraction = 0, message = "Order number must contain only digits")
     private Integer orderNumber;
 }

@@ -32,13 +32,16 @@ public class BidList {
     @Column(nullable = false, length = 30)
     private String type;
 
-    @Digits(integer = 10, fraction = 2)
+    @Digits(integer = 10, fraction = 2, message = "Bid Quantity must contain only digits")
     private Double bidQuantity;
 
-    @Digits(integer = 10, fraction = 2)
+    @Digits(integer = 10, fraction = 2, message = "Ask Quantity must contain only digits")
     private Double askQuantity;
 
+    @Digits(integer = 10, fraction = 2, message = "Bid must contain only digits")
     private Double bid;
+
+    @Digits(integer = 10, fraction = 2, message = "Ask must contain only digits")
     private Double ask;
 
     @Size(max = 125)
