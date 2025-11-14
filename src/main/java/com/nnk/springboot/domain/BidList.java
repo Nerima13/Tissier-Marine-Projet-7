@@ -7,8 +7,11 @@ import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bidlist")
@@ -47,7 +50,7 @@ public class BidList {
     @Size(max = 125)
     private String benchmark;
 
-    private Timestamp bidListDate;
+    private LocalDateTime bidListDate;
 
     @Size(max = 125)
     private String commentary;
@@ -67,12 +70,14 @@ public class BidList {
     @Size(max = 125)
     private String creationName;
 
-    private Timestamp creationDate;
+    @CreationTimestamp
+    private LocalDateTime creationDate;
 
     @Size(max = 125)
     private String revisionName;
 
-    private Timestamp revisionDate;
+    @UpdateTimestamp
+    private LocalDateTime revisionDate;
 
     @Size(max = 125)
     private String dealName;

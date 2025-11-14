@@ -3,8 +3,11 @@ package com.nnk.springboot.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Trade")
@@ -40,7 +43,7 @@ public class Trade {
     @Digits(integer = 10, fraction = 2, message = "Sell Price must contain only digits")
     private Double sellPrice;
 
-    private Timestamp tradeDate;
+    private LocalDateTime tradeDate;
 
     @Size(max = 125)
     private String security;
@@ -60,12 +63,14 @@ public class Trade {
     @Size(max = 125)
     private String creationName;
 
-    private Timestamp creationDate;
+    @CreationTimestamp
+    private LocalDateTime creationDate;
 
     @Size(max = 125)
     private String revisionName;
 
-    private Timestamp revisionDate;
+    @UpdateTimestamp
+    private LocalDateTime revisionDate;
 
     @Size(max = 125)
     private String dealName;

@@ -50,6 +50,8 @@ public class TradeService {
      */
     public Trade create(Trade trade) {
         trade.setTradeId(null); // ensure creation of a new entry
+        trade.setCreationDate(null); // let Hibernate fill it
+        trade.setRevisionDate(null);
         return repository.save(trade);
     }
 
@@ -77,9 +79,7 @@ public class TradeService {
         existing.setBenchmark(trade.getBenchmark());
         existing.setBook(trade.getBook());
         existing.setCreationName(trade.getCreationName());
-        existing.setCreationDate(trade.getCreationDate());
         existing.setRevisionName(trade.getRevisionName());
-        existing.setRevisionDate(trade.getRevisionDate());
         existing.setDealName(trade.getDealName());
         existing.setDealType(trade.getDealType());
         existing.setSourceListId(trade.getSourceListId());

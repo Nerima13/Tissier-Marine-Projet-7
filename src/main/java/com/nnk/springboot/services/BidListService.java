@@ -50,6 +50,8 @@ public class BidListService {
      */
     public BidList create(BidList bid) {
         bid.setBidListId(null);  // ensure a new entry
+        bid.setCreationDate(null);  // Hibernate fill timestamps itself
+        bid.setRevisionDate(null);
         return repository.save(bid);
     }
 
@@ -78,9 +80,7 @@ public class BidListService {
         existing.setTrader(bidList.getTrader());
         existing.setBook(bidList.getBook());
         existing.setCreationName(bidList.getCreationName());
-        existing.setCreationDate(bidList.getCreationDate());
         existing.setRevisionName(bidList.getRevisionName());
-        existing.setRevisionDate(bidList.getRevisionDate());
         existing.setDealName(bidList.getDealName());
         existing.setDealType(bidList.getDealType());
         existing.setSourceListId(bidList.getSourceListId());
