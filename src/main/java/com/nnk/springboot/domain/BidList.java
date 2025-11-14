@@ -3,14 +3,12 @@ package com.nnk.springboot.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -35,16 +33,12 @@ public class BidList {
     @Column(nullable = false, length = 30)
     private String type;
 
-    @Digits(integer = 10, fraction = 2, message = "Bid Quantity must contain only digits")
     private Double bidQuantity;
 
-    @Digits(integer = 10, fraction = 2, message = "Ask Quantity must contain only digits")
     private Double askQuantity;
 
-    @Digits(integer = 10, fraction = 2, message = "Bid must contain only digits")
     private Double bid;
 
-    @Digits(integer = 10, fraction = 2, message = "Ask must contain only digits")
     private Double ask;
 
     @Size(max = 125)

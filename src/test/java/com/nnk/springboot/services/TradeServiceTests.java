@@ -110,13 +110,15 @@ class TradeServiceTests {
         verify(repository).save(argThat(t ->
                 t.getTradeId() == null &&
                         t.getCreationDate() == null &&
-                        t.getRevisionDate() == null
-        ));
+                        t.getRevisionDate() == null));
     }
 
     @Test
     void update_whenExisting_shouldUpdateOnlyMutableFields() {
         when(repository.findById(1)).thenReturn(Optional.of(trade));
+
+        LocalDateTime originalCreationDate = trade.getCreationDate();
+        LocalDateTime originalRevisionDate = trade.getRevisionDate();
 
         Trade updates = new Trade();
         updates.setAccount("Updated Account");
@@ -125,22 +127,21 @@ class TradeServiceTests {
         updates.setSellQuantity(10d);
         updates.setBuyPrice(200d);
         updates.setSellPrice(201d);
-        updates.setTradeDate(LocalDateTime.now());
+        LocalDateTime newTradeDate = LocalDateTime.of(2025, 5, 1, 12, 0);
+        updates.setTradeDate(newTradeDate);
         updates.setSecurity("New Security");
         updates.setStatus("New Status");
         updates.setTrader("New Trader");
         updates.setBenchmark("New Benchmark");
         updates.setBook("New Book");
         updates.setCreationName("New Creator");
+        updates.setCreationDate(LocalDateTime.of(2030, 1, 1, 0, 0));
         updates.setRevisionName("New Revisor");
+        updates.setRevisionDate(LocalDateTime.of(2030, 1, 2, 0, 0));
         updates.setDealName("New Deal");
         updates.setDealType("New Type");
         updates.setSourceListId("New Source");
         updates.setSide("New Side");
-
-        LocalDateTime ignoredTimestamp = LocalDateTime.now();
-        updates.setCreationDate(ignoredTimestamp);
-        updates.setRevisionDate(ignoredTimestamp);
 
         when(repository.save(any(Trade.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -152,20 +153,20 @@ class TradeServiceTests {
         assertEquals(10d, result.getSellQuantity());
         assertEquals(200d, result.getBuyPrice());
         assertEquals(201d, result.getSellPrice());
+        assertEquals(newTradeDate, result.getTradeDate());
         assertEquals("New Security", result.getSecurity());
         assertEquals("New Status", result.getStatus());
         assertEquals("New Trader", result.getTrader());
         assertEquals("New Benchmark", result.getBenchmark());
         assertEquals("New Book", result.getBook());
         assertEquals("New Creator", result.getCreationName());
+        assertEquals(originalCreationDate, result.getCreationDate());
         assertEquals("New Revisor", result.getRevisionName());
+        assertEquals(originalRevisionDate, result.getRevisionDate());
         assertEquals("New Deal", result.getDealName());
         assertEquals("New Type", result.getDealType());
         assertEquals("New Source", result.getSourceListId());
         assertEquals("New Side", result.getSide());
-
-        assertNotEquals(ignoredTimestamp, result.getCreationDate());
-        assertNotEquals(ignoredTimestamp, result.getRevisionDate());
 
         verify(repository).findById(1);
         verify(repository).save(trade);

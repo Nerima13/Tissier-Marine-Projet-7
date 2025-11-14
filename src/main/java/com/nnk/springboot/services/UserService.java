@@ -71,7 +71,10 @@ public class UserService {
         existing.setUsername(user.getUsername());
         existing.setFullname(user.getFullname());
         existing.setRole(user.getRole());
-        existing.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        if (!user.getPassword().equals(existing.getPassword())) {
+            existing.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
 
         return repository.save(existing);
     }

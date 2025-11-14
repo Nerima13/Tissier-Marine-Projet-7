@@ -1,12 +1,8 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.User;
-import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,7 +15,6 @@ import jakarta.validation.Valid;
 public class UserController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     @RequestMapping("/user/list")
     public String home(Model model) {
@@ -40,7 +35,7 @@ public class UserController {
         if (result.hasErrors()) {
             return "user/add";
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userService.create(user);
         return "redirect:/user/list";
     }
@@ -48,6 +43,7 @@ public class UserController {
     @GetMapping("/user/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         User existing = userService.findById(id);
+
         existing.setPassword("");
         model.addAttribute("user", existing);
         return "user/update";
@@ -61,13 +57,11 @@ public class UserController {
         if (result.hasErrors()) {
             return "user/update";
         }
+
         User current = userService.findById(id);
 
-        // If the password is empty, the current (hashed) one is kept
         if (user.getPassword() == null || user.getPassword().isBlank()) {
             user.setPassword(current.getPassword());
-        } else {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
         user.setId(id);
