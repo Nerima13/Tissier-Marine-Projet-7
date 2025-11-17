@@ -12,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
  * Provides access to the login page, a secured sample page, and an error page.
  */
 @Controller
-@RequestMapping("app")
 @RequiredArgsConstructor
 public class LoginController {
 

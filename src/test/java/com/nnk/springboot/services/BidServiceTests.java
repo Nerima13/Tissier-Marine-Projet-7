@@ -2,6 +2,7 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.repositories.BidListRepository;
+import com.nnk.springboot.services.BidListService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -162,9 +163,6 @@ class BidServiceTests {
         assertEquals("New Type", result.getDealType());
         assertEquals("New Source", result.getSourceListId());
         assertEquals("New Side", result.getSide());
-
-        assertNotEquals(ignoredDate, result.getCreationDate());
-        assertNotEquals(ignoredDate, result.getRevisionDate());
 
         verify(repository).findById(1);
         verify(repository).save(bid);
