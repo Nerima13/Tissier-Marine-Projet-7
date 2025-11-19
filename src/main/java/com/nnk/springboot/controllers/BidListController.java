@@ -4,10 +4,14 @@ import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.services.BidListService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller handling CRUD operations for {@link BidList}.
@@ -27,7 +31,14 @@ public class BidListController {
      */
     @RequestMapping("/bidList/list")
     public String home(Model model) {
-        model.addAttribute("bidLists", bidListService.findAll());
+        List<BidList> bidLists = bidListService.findAll();
+        model.addAttribute("bidLists", bidLists);
+
+        // Retrieve the logged-in user's username
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication != null ? authentication.getName() : "anonymous";
+        model.addAttribute("username", username);
+
         return "bidList/list";
     }
 

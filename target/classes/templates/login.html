@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 40px;
+            font-size: 28px;
+            font-weight: normal;
+        }
+
+        .login-box {
+            display: inline-block;
+            text-align: left;
+            padding: 20px 30px;
+            border: 1px solid #ccc;
+            background: #fafafa;
+        }
+
+        label {
+            font-weight: bold;
+            display: inline-block;
+            width: 80px;
+            margin-bottom: 6px;
+        }
+
+        input[type=text],
+        input[type=password] {
+            width: 200px;
+            padding: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #bfbebe;
+        }
+
+        .error-msg {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 5px 15px;
+            margin-top: 10px;
+            background: #e6e6e6;
+            border: 1px solid #9c9c9c;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #d4d4d4;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Login Screen</h2>
+
+<!-- Error message from Spring Security -->
+<div th:if="${param.error}" class="error-msg">
+    Invalid username or password.
+</div>
+
+<!-- Logout confirmation -->
+<div th:if="${param.logout}" class="error-msg" style="color:green;">
+    You have been logged out.
+</div>
+
+<div class="login-box">
+
+    <h3 style="margin-bottom: 20px;">Login with Username and Password</h3>
+
+    <form th:action="@{/login}" method="post">
+
+        <div>
+            <label for="username">User:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div>
+            <label for="password" style="width: 80px;">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <div style="text-align: left; margin-top: 10px;">
+            <button type="submit">Login</button>
+        </div>
+
+    </form>
+</div>
+
+</body>
+</html>

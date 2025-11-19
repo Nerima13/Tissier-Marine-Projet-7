@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -21,7 +22,21 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class UserService {
 
     private final UserRepository repository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    private static final Pattern RAW_PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#^()_+\\-=])[A-Za-z\\d@$!%*?&#^()_+\\-=]{8,}$");
+
+    /**
+     * Validates the raw password before encoding and saving.
+     *
+     * @param rawPassword plain text password from the form
+     */
+    private void validateRawPassword(String rawPassword) {
+        if (rawPassword == null || !RAW_PASSWORD_PATTERN.matcher(rawPassword).matches()) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long and include an uppercase letter, a digit, and a special symbol.");
+        }
+    }
 
     /**
      * Retrieves all User entries.
@@ -53,7 +68,13 @@ public class UserService {
      */
     public User create(User user) {
         user.setId(null); // ensure creation
+
+        // 1) Validate the raw (plain text) password
+        validateRawPassword(user.getPassword());
+
+        // 2) Encode the password before saving it
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         return repository.save(user);
     }
 
@@ -72,7 +93,9 @@ public class UserService {
         existing.setFullname(user.getFullname());
         existing.setRole(user.getRole());
 
-        if (!user.getPassword().equals(existing.getPassword())) {
+        // If a new password is provided, validate it and encode it
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
+            validateRawPassword(user.getPassword());
             existing.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
