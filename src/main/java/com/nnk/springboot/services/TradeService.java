@@ -49,7 +49,7 @@ public class TradeService {
      * @return the saved Trade entity
      */
     public Trade create(Trade trade) {
-        trade.setTradeId(null); // ensure creation of a new entry
+        trade.setId(null); // ensure creation of a new entry
         trade.setCreationDate(null); // let Hibernate fill it
         trade.setRevisionDate(null);
         return repository.save(trade);

@@ -49,7 +49,7 @@ public class BidListService {
      * @return the saved BidList entity
      */
     public BidList create(BidList bid) {
-        bid.setBidListId(null);  // ensure a new entry
+        bid.setId(null);  // ensure a new entry
         bid.setCreationDate(null);  // Hibernate fill timestamps itself
         bid.setRevisionDate(null);
         return repository.save(bid);

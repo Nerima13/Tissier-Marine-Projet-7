@@ -9,7 +9,7 @@
 <body>
 <div class="container">
 
-    <!-- Menu + utilisateur connecté -->
+    <!-- Menu + logged-in user -->
     <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-6">
             <a href="/bidList/list">Bid List</a>&nbsp;|&nbsp;
@@ -21,7 +21,7 @@
 
         <div class="col-md-6 text-right">
             <div>
-                Logged in user:
+                Logged in user :
                 <span th:text="${username}">admin</span>
             </div>
             <form th:action="@{/logout}" method="post" style="margin-top: 5px;">
@@ -37,14 +37,14 @@
         </div>
     </div>
 
-    <!-- Titre de la section -->
+    <!-- Section title -->
     <div class="row">
         <div class="col-md-12">
             <h2>Bid List</h2>
         </div>
     </div>
 
-    <!-- Bouton + tableau -->
+    <!-- Button + table -->
     <div class="row">
         <div class="col-md-12">
             <a href="/bidList/add" class="btn btn-primary btn-sm">Add New</a>
