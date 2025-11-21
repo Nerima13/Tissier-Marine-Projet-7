@@ -103,7 +103,7 @@ public class BidControllerTest {
     public void showUpdateForm_returnsUpdateView_andAddsExistingBidList() {
         Model model = new ConcurrentModel();
         BidList existing = new BidList();
-        existing.setBidListId(1);
+        existing.setId(1);
         existing.setAccount("ExistingAccount");
         when(bidListService.findById(1)).thenReturn(existing);
 

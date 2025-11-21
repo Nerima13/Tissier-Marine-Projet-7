@@ -135,7 +135,7 @@ public class TradeControllerTest {
     public void showUpdateForm_returnsUpdateView_andAddsExistingTrade() {
         Model model = new ConcurrentModel();
         Trade existing = new Trade();
-        existing.setTradeId(1);
+        existing.setId(1);
         existing.setAccount("ExistingAccount");
         when(tradeService.findById(1)).thenReturn(existing);
 

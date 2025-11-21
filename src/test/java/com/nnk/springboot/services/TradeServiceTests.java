@@ -2,7 +2,6 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.TradeRepository;
-import com.nnk.springboot.services.TradeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +31,7 @@ class TradeServiceTests {
     @BeforeEach
     void setUp() {
         trade = new Trade();
-        trade.setTradeId(1);
+        trade.setId(1);
         trade.setAccount("Account");
         trade.setType("Type");
         trade.setBuyQuantity(10d);
@@ -73,7 +72,7 @@ class TradeServiceTests {
 
         Trade result = tradeService.findById(1);
 
-        assertEquals(1, result.getTradeId());
+        assertEquals(1, result.getId());
         verify(repository).findById(1);
     }
 
@@ -92,24 +91,24 @@ class TradeServiceTests {
     @Test
     void create_shouldResetIdAndTimestampsAndSave() {
         Trade toCreate = new Trade();
-        toCreate.setTradeId(42);
+        toCreate.setId(42);
         toCreate.setAccount("New Account");
         toCreate.setCreationDate(LocalDateTime.now());
         toCreate.setRevisionDate(LocalDateTime.now());
 
         Trade saved = new Trade();
-        saved.setTradeId(1);
+        saved.setId(1);
         saved.setAccount("New Account");
 
         when(repository.save(any(Trade.class))).thenReturn(saved);
 
         Trade result = tradeService.create(toCreate);
 
-        assertEquals(1, result.getTradeId());
+        assertEquals(1, result.getId());
         assertEquals("New Account", result.getAccount());
 
         verify(repository).save(argThat(t ->
-                t.getTradeId() == null &&
+                t.getId() == null &&
                         t.getCreationDate() == null &&
                         t.getRevisionDate() == null));
     }

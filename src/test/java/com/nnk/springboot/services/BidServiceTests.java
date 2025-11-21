@@ -2,7 +2,6 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.repositories.BidListRepository;
-import com.nnk.springboot.services.BidListService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +31,7 @@ class BidServiceTests {
     @BeforeEach
     void setUp() {
         bid = new BidList();
-        bid.setBidListId(1);
+        bid.setId(1);
         bid.setAccount("Account");
         bid.setType("Type");
         bid.setBidQuantity(10d);
@@ -75,7 +74,7 @@ class BidServiceTests {
         BidList result = bidListService.findById(1);
 
         assertNotNull(result);
-        assertEquals(1, result.getBidListId());
+        assertEquals(1, result.getId());
         verify(repository).findById(1);
     }
 
@@ -94,11 +93,11 @@ class BidServiceTests {
     @Test
     void create_shouldSetIdToNullAndSave() {
         BidList toCreate = new BidList();
-        toCreate.setBidListId(42);
+        toCreate.setId(42);
         toCreate.setAccount("New Account");
 
         BidList saved = new BidList();
-        saved.setBidListId(1);
+        saved.setId(1);
         saved.setAccount("New Account");
 
         when(repository.save(any(BidList.class))).thenReturn(saved);
@@ -106,9 +105,9 @@ class BidServiceTests {
         BidList result = bidListService.create(toCreate);
 
         assertNotNull(result);
-        assertEquals(1, result.getBidListId());
+        assertEquals(1, result.getId());
         assertEquals("New Account", result.getAccount());
-        verify(repository).save(argThat(b -> b.getBidListId() == null));
+        verify(repository).save(argThat(b -> b.getId() == null));
     }
 
     @Test
