@@ -34,10 +34,18 @@ public class BidListController {
         List<BidList> bidLists = bidListService.findAll();
         model.addAttribute("bidLists", bidLists);
 
-        // Retrieve the logged-in user's username
+        // Retrieve the logged-in user's authentication
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication != null ? authentication.getName() : "anonymous";
+
+        // Username for display
+        String username = (authentication != null) ? authentication.getName() : "anonymous";
         model.addAttribute("username", username);
+
+        // Check if the logged-in user has ADMIN role
+        boolean isAdmin = authentication != null &&
+                authentication.getAuthorities().stream()
+                        .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        model.addAttribute("isAdmin", isAdmin);
 
         return "bidList/list";
     }
