@@ -90,21 +90,7 @@ public class RuleNameController {
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         RuleName existing = ruleNameService.findById(id);
         model.addAttribute("ruleName", existing);
-
-        // Retrieve the logged-in user's authentication
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Username for display
-        String username = (authentication != null) ? authentication.getName() : "anonymous";
-        model.addAttribute("username", username);
-
-        // Check if the logged-in user has ADMIN role
-        boolean isAdmin = authentication != null &&
-                authentication.getAuthorities().stream()
-                        .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
-        model.addAttribute("isAdmin", isAdmin);
-
-        return "bidList/list";
+        return "ruleName/update";
     }
 
     /**

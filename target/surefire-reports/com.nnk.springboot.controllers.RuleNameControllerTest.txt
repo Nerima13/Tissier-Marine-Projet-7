@@ -1,0 +1,17 @@
+-------------------------------------------------------------------------------
+Test set: com.nnk.springboot.controllers.RuleNameControllerTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.061 s <<< FAILURE! -- in com.nnk.springboot.controllers.RuleNameControllerTest
+com.nnk.springboot.controllers.RuleNameControllerTest.showUpdateForm_returnsUpdateView_andAddsExistingRuleName -- Time elapsed: 0.019 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <ruleName/update> but was: <bidList/list>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:177)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1145)
+	at com.nnk.springboot.controllers.RuleNameControllerTest.showUpdateForm_returnsUpdateView_andAddsExistingRuleName(RuleNameControllerTest.java:120)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

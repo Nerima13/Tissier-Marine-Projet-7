@@ -1,0 +1,14 @@
+com\nnk\springboot\services\TradeServiceTests.class
+com\nnk\springboot\services\CurveServiceTests.class
+com\nnk\springboot\controllers\RuleNameControllerTest.class
+com\nnk\springboot\controllers\CurveControllerTest.class
+com\nnk\springboot\security\SecurityIT.class
+com\nnk\springboot\controllers\RatingControllerTest.class
+com\nnk\springboot\services\UserServiceTests.class
+com\nnk\springboot\services\RatingServiceTests.class
+com\nnk\springboot\controllers\TradeControllerTest.class
+com\nnk\springboot\controllers\BidControllerTest.class
+com\nnk\springboot\services\BidServiceTests.class
+com\nnk\springboot\services\RuleServiceTests.class
+com\nnk\springboot\services\CustomUserDetailsServiceTests.class
+com\nnk\springboot\controllers\UserControllerTest.class
