@@ -1,2 +1,3 @@
 com\nnk\springboot\Application.class
 com\nnk\springboot\config\SecurityConfig.class
+com\nnk\springboot\controllers\BidListController.class
