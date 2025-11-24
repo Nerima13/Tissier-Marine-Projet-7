@@ -3,6 +3,8 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.services.TradeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,6 +30,20 @@ public class TradeController {
     @RequestMapping("/trade/list")
     public String home(Model model) {
         model.addAttribute("trades", tradeService.findAll());
+
+        // Retrieve the logged-in user's authentication
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Username for display
+        String username = (authentication != null) ? authentication.getName() : "anonymous";
+        model.addAttribute("username", username);
+
+        // Check if the logged-in user has ADMIN role
+        boolean isAdmin = authentication != null &&
+                authentication.getAuthorities().stream()
+                        .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        model.addAttribute("isAdmin", isAdmin);
+
         return "trade/list";
     }
 

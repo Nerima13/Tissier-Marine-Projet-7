@@ -3,6 +3,8 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.services.RuleNameService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,6 +31,20 @@ public class RuleNameController {
     @RequestMapping("/ruleName/list")
     public String home(Model model) {
         model.addAttribute("ruleNames", ruleNameService.findAll());
+
+        // Retrieve the logged-in user's authentication
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Username for display
+        String username = (authentication != null) ? authentication.getName() : "anonymous";
+        model.addAttribute("username", username);
+
+        // Check if the logged-in user has ADMIN role
+        boolean isAdmin = authentication != null &&
+                authentication.getAuthorities().stream()
+                        .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        model.addAttribute("isAdmin", isAdmin);
+
         return "ruleName/list";
     }
 
@@ -73,7 +89,21 @@ public class RuleNameController {
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         RuleName existing = ruleNameService.findById(id);
         model.addAttribute("ruleName", existing);
-        return "ruleName/update";
+
+        // Retrieve the logged-in user's authentication
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Username for display
+        String username = (authentication != null) ? authentication.getName() : "anonymous";
+        model.addAttribute("username", username);
+
+        // Check if the logged-in user has ADMIN role
+        boolean isAdmin = authentication != null &&
+                authentication.getAuthorities().stream()
+                        .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+        model.addAttribute("isAdmin", isAdmin);
+
+        return "bidList/list";
     }
 
     /**

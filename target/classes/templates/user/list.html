@@ -25,16 +25,34 @@
                 Logged in user :
                 <span th:text="${username}">admin</span>
             </div>
-            <form th:action="@{/logout}" method="post" style="margin-top: 5px;">
-                <button type="submit"
-                        style="background-color: #f8f9fa;
-                               border: 1px solid #999;
-                               padding: 3px 12px;
-                               font-size: 14px;
-                               cursor: pointer;">
-                    Logout
-                </button>
-            </form>
+
+            <div style="margin-top: 5px;">
+                <!-- User Management button (ADMIN only) -->
+                <form th:if="${isAdmin}"
+                      th:action="@{/user/list}" method="get"
+                      style="display:inline-block; margin-right:8px;">
+                    <button type="submit"
+                            style="background-color: #f8f9fa;
+                   border: 1px solid #999;
+                   padding: 3px 12px;
+                   font-size: 14px;
+                   cursor: pointer;">
+                        User Management
+                    </button>
+                </form>
+
+                <!-- Logout button -->
+                <form th:action="@{/logout}" method="post" style="display:inline-block;">
+                    <button type="submit"
+                            style="background-color: #f8f9fa;
+                                   border: 1px solid #999;
+                                   padding: 3px 12px;
+                                   font-size: 14px;
+                                   cursor: pointer;">
+                        Logout
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
