@@ -2,7 +2,6 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.repositories.RatingRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,10 +15,13 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
  * related to the Rating domain.
  */
 @Service
-@RequiredArgsConstructor
 public class RatingService {
 
     private final RatingRepository repository;
+
+    public RatingService(RatingRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Retrieves all Rating entries.

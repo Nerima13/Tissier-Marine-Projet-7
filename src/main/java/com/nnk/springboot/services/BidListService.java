@@ -2,7 +2,6 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.repositories.BidListRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,10 +15,13 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
  * related to the BidList domain.
  */
 @Service
-@RequiredArgsConstructor
 public class BidListService {
 
     private final BidListRepository repository;
+
+    public BidListService(BidListRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Returns all BidList entries.

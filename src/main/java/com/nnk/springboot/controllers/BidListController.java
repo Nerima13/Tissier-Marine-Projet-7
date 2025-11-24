@@ -3,7 +3,6 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.services.BidListService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -18,10 +17,13 @@ import java.util.List;
  * Provides routes to list, add, update, and delete BidList entries.
  */
 @Controller
-@RequiredArgsConstructor
 public class BidListController {
 
     private final BidListService bidListService;
+
+    public BidListController(BidListService bidListService) {
+        this.bidListService = bidListService;
+    }
 
     /**
      * Displays the list of all BidList entries.

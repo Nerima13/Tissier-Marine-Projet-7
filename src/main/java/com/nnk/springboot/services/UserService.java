@@ -2,7 +2,6 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.User;
 import com.nnk.springboot.repositories.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,7 +17,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
  * before persisting users.
  */
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository repository;
@@ -26,6 +24,11 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     private static final Pattern RAW_PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#^()_+\\-=])[A-Za-z\\d@$!%*?&#^()_+\\-=]{8,}$");
+
+    public UserService(UserRepository repository, BCryptPasswordEncoder passwordEncoder) {
+        this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     /**
      * Validates the raw password before encoding and saving.

@@ -2,24 +2,26 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.services.TradeService;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 /**
  * Controller handling CRUD operations for {@link Trade}.
  * Provides routes to list, add, update, and delete Trade entries.
  */
 @Controller
-@RequiredArgsConstructor
 public class TradeController {
 
     private final TradeService tradeService;
+
+    public TradeController(TradeService tradeService) {
+        this.tradeService = tradeService;
+    }
 
     /**
      * Displays the list of all Trade entries.

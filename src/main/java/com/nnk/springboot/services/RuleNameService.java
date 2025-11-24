@@ -2,7 +2,6 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.repositories.RuleNameRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,10 +14,13 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
  * Provides CRUD operations for the RuleName domain.
  */
 @Service
-@RequiredArgsConstructor
 public class RuleNameService {
 
     private final RuleNameRepository repository;
+
+    public RuleNameService(RuleNameRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Retrieves all RuleName entries.

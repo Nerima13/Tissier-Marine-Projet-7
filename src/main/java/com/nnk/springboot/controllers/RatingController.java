@@ -3,7 +3,6 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.services.RatingService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,10 +16,13 @@ import org.springframework.web.bind.annotation.*;
  * Provides routes to list, add, update, and delete Rating entries.
  */
 @Controller
-@RequiredArgsConstructor
 public class RatingController {
 
     private final RatingService ratingService;
+
+    public RatingController(RatingService ratingService) {
+        this.ratingService = ratingService;
+    }
 
     /**
      * Displays the list of all Rating entries.

@@ -1,10 +1,8 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.services.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -12,10 +10,13 @@ import org.springframework.web.servlet.ModelAndView;
  * Provides access to the login page, a secured sample page, and an error page.
  */
 @Controller
-@RequiredArgsConstructor
 public class LoginController {
 
     private final UserService userService;
+
+    public LoginController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * Displays the login page.

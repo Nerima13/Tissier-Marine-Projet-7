@@ -3,7 +3,6 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.services.CurveService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,10 +16,13 @@ import org.springframework.web.bind.annotation.*;
  * Provides routes to list, add, update, and delete CurvePoint entries.
  */
 @Controller
-@RequiredArgsConstructor
 public class CurveController {
 
     private final CurveService curveService;
+
+    public CurveController(CurveService curveService) {
+        this.curveService = curveService;
+    }
 
     /**
      * Displays the list of all CurvePoint entries.

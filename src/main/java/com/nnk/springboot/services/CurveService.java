@@ -2,7 +2,6 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.repositories.CurvePointRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,10 +14,13 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
  * Provides basic CRUD operations for the CurvePoint domain.
  */
 @Service
-@RequiredArgsConstructor
 public class CurveService {
 
     private final CurvePointRepository repository;
+
+    public CurveService(CurvePointRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Retrieves all CurvePoint entries.

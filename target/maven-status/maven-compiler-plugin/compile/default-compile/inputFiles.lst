@@ -1,4 +1,5 @@
 C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\Application.java
+C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\config\SecurityConfig.java
 C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\controllers\BidListController.java
 C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\controllers\CurveController.java
 C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\controllers\HomeController.java
@@ -19,3 +20,10 @@ C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\sprin
 C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\repositories\RuleNameRepository.java
 C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\repositories\TradeRepository.java
 C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\repositories\UserRepository.java
+C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\services\BidListService.java
+C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\services\CurveService.java
+C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\services\CustomUserDetailsService.java
+C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\services\RatingService.java
+C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\services\RuleNameService.java
+C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\services\TradeService.java
+C:\Users\Marine\IdeaProjects\Tissier-Marine-Projet-7\src\main\java\com\nnk\springboot\services\UserService.java

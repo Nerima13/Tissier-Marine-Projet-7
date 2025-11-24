@@ -2,7 +2,6 @@ package com.nnk.springboot.services;
 
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.TradeRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,10 +14,13 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
  * Provides CRUD operations for the Trade domain.
  */
 @Service
-@RequiredArgsConstructor
 public class TradeService {
 
     private final TradeRepository repository;
+
+    public TradeService(TradeRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Retrieves all Trade entries.
