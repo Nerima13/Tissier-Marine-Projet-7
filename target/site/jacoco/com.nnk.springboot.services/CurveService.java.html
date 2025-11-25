@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CurveService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">springboot</a> &gt; <a href="index.source.html" class="el_package">com.nnk.springboot.services</a> &gt; <span class="el_source">CurveService.java</span></div><h1>CurveService.java</h1><pre class="source lang-java linenums">package com.nnk.springboot.services;
+
+import com.nnk.springboot.domain.CurvePoint;
+import com.nnk.springboot.repositories.CurvePointRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+/**
+ * Service layer for managing {@link CurvePoint} entities.
+ * Provides basic CRUD operations for the CurvePoint domain.
+ */
+@Service
+public class CurveService {
+
+    private final CurvePointRepository repository;
+
+<span class="fc" id="L21">    public CurveService(CurvePointRepository repository) {</span>
+<span class="fc" id="L22">        this.repository = repository;</span>
+<span class="fc" id="L23">    }</span>
+
+    /**
+     * Retrieves all CurvePoint entries.
+     *
+     * @return list of CurvePoint entities
+     */
+    public List&lt;CurvePoint&gt; findAll() {
+<span class="fc" id="L31">        return repository.findAll();</span>
+    }
+
+    /**
+     * Retrieves a CurvePoint by its ID.
+     *
+     * @param id the CurvePoint ID
+     * @return the corresponding CurvePoint entity
+     * @throws ResponseStatusException if not found (404)
+     */
+    public CurvePoint findById(Integer id) {
+<span class="fc" id="L42">        return repository.findById(id)</span>
+<span class="fc" id="L43">                .orElseThrow(() -&gt; new ResponseStatusException(</span>
+                        NOT_FOUND, &quot;CurvePoint not found with id: &quot; + id));
+    }
+
+    /**
+     * Creates a new CurvePoint entry.
+     *
+     * @param curvePoint the CurvePoint to create
+     * @return the saved CurvePoint entity
+     */
+    public CurvePoint create(CurvePoint curvePoint) {
+<span class="fc" id="L54">        curvePoint.setId(null); // ensure a new entry</span>
+<span class="fc" id="L55">        return repository.save(curvePoint);</span>
+    }
+
+    /**
+     * Updates an existing CurvePoint entry.
+     *
+     * @param id the ID of the CurvePoint to update
+     * @param curvePoint data to apply to the update
+     * @return the updated CurvePoint entity
+     * @throws ResponseStatusException if the CurvePoint does not exist
+     */
+    public CurvePoint update(Integer id, CurvePoint curvePoint) {
+<span class="fc" id="L67">        CurvePoint existing = findById(id);</span>
+
+<span class="fc" id="L69">        existing.setCurveId(curvePoint.getCurveId());</span>
+<span class="fc" id="L70">        existing.setAsOfDate(curvePoint.getAsOfDate());</span>
+<span class="fc" id="L71">        existing.setTerm(curvePoint.getTerm());</span>
+<span class="fc" id="L72">        existing.setValue(curvePoint.getValue());</span>
+<span class="fc" id="L73">        existing.setCreationDate(curvePoint.getCreationDate());</span>
+
+<span class="fc" id="L75">        return repository.save(existing);</span>
+    }
+
+    /**
+     * Deletes a CurvePoint by its ID.
+     *
+     * @param id the ID of the CurvePoint to delete
+     * @throws ResponseStatusException if the CurvePoint does not exist
+     */
+    public void delete(Integer id) {
+<span class="fc" id="L85">        CurvePoint existing = findById(id);</span>
+<span class="fc" id="L86">        repository.delete(existing);</span>
+<span class="fc" id="L87">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

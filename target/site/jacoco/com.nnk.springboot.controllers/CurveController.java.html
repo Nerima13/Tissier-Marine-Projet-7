@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CurveController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">springboot</a> &gt; <a href="index.source.html" class="el_package">com.nnk.springboot.controllers</a> &gt; <span class="el_source">CurveController.java</span></div><h1>CurveController.java</h1><pre class="source lang-java linenums">package com.nnk.springboot.controllers;
+
+import com.nnk.springboot.domain.CurvePoint;
+import com.nnk.springboot.services.CurveService;
+import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+
+/**
+ * Controller handling CRUD operations for {@link CurvePoint}.
+ * Provides routes to list, add, update, and delete CurvePoint entries.
+ */
+@Controller
+public class CurveController {
+
+    private final CurveService curveService;
+
+<span class="fc" id="L23">    public CurveController(CurveService curveService) {</span>
+<span class="fc" id="L24">        this.curveService = curveService;</span>
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * Displays the list of all CurvePoint entries.
+     *
+     * @param model the model used to pass data to the view
+     * @return the list view
+     */
+    @RequestMapping(&quot;/curvePoint/list&quot;)
+    public String home(Model model) {
+<span class="fc" id="L35">        model.addAttribute(&quot;curvePoints&quot;, curveService.findAll());</span>
+
+        // Retrieve the logged-in user's authentication
+<span class="fc" id="L38">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+
+        // Username for display
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        String username = (authentication != null) ? authentication.getName() : &quot;anonymous&quot;;</span>
+<span class="fc" id="L42">        model.addAttribute(&quot;username&quot;, username);</span>
+
+        // Check if the logged-in user has ADMIN role
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        boolean isAdmin = authentication != null &amp;&amp;</span>
+<span class="nc" id="L46">                authentication.getAuthorities().stream()</span>
+<span class="pc bnc" id="L47" title="All 2 branches missed.">                        .anyMatch(a -&gt; &quot;ROLE_ADMIN&quot;.equals(a.getAuthority()));</span>
+<span class="fc" id="L48">        model.addAttribute(&quot;isAdmin&quot;, isAdmin);</span>
+
+<span class="fc" id="L50">        return &quot;curvePoint/list&quot;;</span>
+    }
+
+    /**
+     * Displays the form to add a new CurvePoint.
+     *
+     * @param model the model used to pass data to the view
+     * @return the add form view
+     */
+    @GetMapping(&quot;/curvePoint/add&quot;)
+    public String addBidForm(Model model) {
+<span class="fc" id="L61">        model.addAttribute(&quot;curvePoint&quot;, new CurvePoint());</span>
+<span class="fc" id="L62">        return &quot;curvePoint/add&quot;;</span>
+    }
+
+    /**
+     * Validates and saves a new CurvePoint entry.
+     *
+     * @param curvePoint the CurvePoint submitted from the form
+     * @param result validation result
+     * @return redirect to the list view if successful, otherwise return the form
+     */
+    @PostMapping(&quot;/curvePoint/validate&quot;)
+    public String validate(@Valid @ModelAttribute(&quot;curvePoint&quot;) CurvePoint curvePoint,
+                           BindingResult result,
+                           Model model) {
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (result.hasErrors()) {</span>
+<span class="fc" id="L77">            return &quot;curvePoint/add&quot;;</span>
+        }
+<span class="fc" id="L79">        curveService.create(curvePoint);</span>
+<span class="fc" id="L80">        return &quot;redirect:/curvePoint/list&quot;;</span>
+    }
+
+    /**
+     * Displays the form to update an existing CurvePoint.
+     *
+     * @param id the ID of the CurvePoint to update
+     * @param model the model used to pass data to the view
+     * @return the update form view
+     */
+    @GetMapping(&quot;/curvePoint/update/{id}&quot;)
+    public String showUpdateForm(@PathVariable(&quot;id&quot;) Integer id, Model model) {
+<span class="fc" id="L92">        CurvePoint existing = curveService.findById(id);</span>
+<span class="fc" id="L93">        model.addAttribute(&quot;curvePoint&quot;, existing);</span>
+<span class="fc" id="L94">        return &quot;curvePoint/update&quot;;</span>
+    }
+
+    /**
+     * Validates and updates an existing CurvePoint entry.
+     *
+     * @param id the ID of the CurvePoint being updated
+     * @param curvePoint the updated data submitted from the form
+     * @param result validation result
+     * @return redirect to the list view if successful, otherwise return the form
+     */
+    @PostMapping(&quot;/curvePoint/update/{id}&quot;)
+    public String updateBid(@PathVariable(&quot;id&quot;) Integer id,
+                            @Valid @ModelAttribute(&quot;curvePoint&quot;) CurvePoint curvePoint,
+                            BindingResult result,
+                            Model model) {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (result.hasErrors()) {</span>
+<span class="fc" id="L111">            return &quot;curvePoint/update&quot;;</span>
+        }
+<span class="fc" id="L113">        curveService.update(id, curvePoint);</span>
+<span class="fc" id="L114">        return &quot;redirect:/curvePoint/list&quot;;</span>
+    }
+
+    /**
+     * Deletes a CurvePoint entry by its ID.
+     *
+     * @param id the ID of the CurvePoint to delete
+     * @return redirect to the list view
+     */
+    @GetMapping(&quot;/curvePoint/delete/{id}&quot;)
+    public String deleteBid(@PathVariable(&quot;id&quot;) Integer id) {
+<span class="fc" id="L125">        curveService.delete(id);</span>
+<span class="fc" id="L126">        return &quot;redirect:/curvePoint/list&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

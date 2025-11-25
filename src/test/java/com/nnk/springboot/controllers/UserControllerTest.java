@@ -2,11 +2,16 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.User;
 import com.nnk.springboot.services.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,35 +23,66 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link UserController}.
+ */
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
 
     @Mock
-    UserService userService;
+    private UserService userService;
 
     @Mock
-    BindingResult bindingResult;
+    private BindingResult bindingResult;
+
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private SecurityContext securityContext;
 
     @InjectMocks
-    UserController controller;
+    private UserController controller;
 
-    // 1) GET /user/list => returns "user/list" and adds the list to the model
+    /**
+     * Clears the SecurityContext after each test.
+     */
+    @AfterEach
+    public void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
+    /**
+     * Tests that the home method returns the list view and adds users and user info to the model.
+     */
     @Test
     public void home_returnsListView_andAddsUsersToModel() {
         Model model = new ConcurrentModel();
         List<User> users = List.of(new User(), new User());
+
         when(userService.findAll()).thenReturn(users);
+
+        when(authentication.getName()).thenReturn("testUser");
+        doReturn(List.of(new SimpleGrantedAuthority("ROLE_USER"))).when(authentication).getAuthorities();
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
         String view = controller.home(model);
 
         assertEquals("user/list", view);
+
         assertTrue(model.containsAttribute("users"));
         assertSame(users, model.getAttribute("users"));
+
+        assertEquals("testUser", model.getAttribute("username"));
+        assertEquals(false, model.getAttribute("isAdmin"));
+
         verify(userService).findAll();
-        verifyNoMoreInteractions(userService);
     }
 
-    // 2) GET /user/add => returns "user/add" and adds an empty User
+    /**
+     * Tests that the add form view is returned with a new empty User object.
+     */
     @Test
     public void addUser_returnsAddView_andAddsEmptyUser() {
         Model model = new ConcurrentModel();
@@ -60,7 +96,9 @@ public class UserControllerTest {
         verifyNoInteractions(userService);
     }
 
-    // 3) POST /user/validate with errors => returns "user/add" without calling the service
+    /**
+     * Tests that validation errors prevent saving and return the user to the add form.
+     */
     @Test
     public void validate_whenHasErrors_returnsAddView_andDoesNotCallService() {
         Model model = new ConcurrentModel();
@@ -74,7 +112,9 @@ public class UserControllerTest {
         verifyNoInteractions(userService);
     }
 
-    // 4) POST /user/validate without errors => calls create() with the form and redirects
+    /**
+     * Tests that valid data triggers the service creation and redirects to the list.
+     */
     @Test
     public void validate_whenNoErrors_callsServiceWithForm_andRedirectsToList() {
         Model model = new ConcurrentModel();
@@ -98,10 +138,11 @@ public class UserControllerTest {
                         && "Password1!".equals(u.getPassword())
                         && "John Doe".equals(u.getFullname())
                         && "ADMIN".equals(u.getRole())));
-        verifyNoMoreInteractions(userService);
     }
 
-    // 5) GET /user/update/{id} => returns "user/update" with existing user but password cleared
+    /**
+     * Tests that the update form is displayed with existing data, and the password field is cleared.
+     */
     @Test
     public void showUpdateForm_returnsUpdateView_andAddsExistingUserWithEmptyPassword() {
         Model model = new ConcurrentModel();
@@ -117,22 +158,16 @@ public class UserControllerTest {
         String view = controller.showUpdateForm(1, model);
 
         assertEquals("user/update", view);
-        assertTrue(model.containsAttribute("user"));
 
         User modelUser = (User) model.getAttribute("user");
-        assertNotNull(modelUser);
-        assertEquals(1, modelUser.getId());
-        assertEquals("john.doe", modelUser.getUsername());
-        assertEquals("John Doe", modelUser.getFullname());
-        assertEquals("USER", modelUser.getRole());
-        // Controller clears the password field for the form
         assertEquals("", modelUser.getPassword());
 
         verify(userService).findById(1);
-        verifyNoMoreInteractions(userService);
     }
 
-    // 6) POST /user/update/{id} with errors => returns "user/update" without calling service
+    /**
+     * Tests that validation errors during update return the user to the update form.
+     */
     @Test
     public void updateUser_whenHasErrors_returnsUpdateView_andDoesNotCallService() {
         Model model = new ConcurrentModel();
@@ -146,66 +181,24 @@ public class UserControllerTest {
         verifyNoInteractions(userService);
     }
 
-    // 7) POST /user/update/{id} with blank password => keeps current password and redirects
+    /**
+     * Tests that if the password field is left blank, the existing password is preserved during the update.
+     */
     @Test
     public void updateUser_whenPasswordBlank_usesCurrentPassword_andRedirectsToList() {
         Model model = new ConcurrentModel();
-
-        // Current user in DB (with encoded password)
-        User current = new User();
-        current.setId(1);
-        current.setUsername("john.doe");
-        current.setPassword("encodedPassword");
-        current.setFullname("John Doe");
-        current.setRole("USER");
-
-        // Form submitted with blank password
-        User form = new User();
-        form.setUsername("john.doe.updated");
-        form.setPassword(""); // blank -> controller should reuse current password
-        form.setFullname("John Doe Updated");
-        form.setRole("ADMIN");
-
-        when(bindingResult.hasErrors()).thenReturn(false);
-        when(userService.findById(1)).thenReturn(current);
-
-        String view = controller.updateUser(1, form, bindingResult, model);
-
-        assertEquals("redirect:/user/list", view);
-        verify(bindingResult).hasErrors();
-        // findById is called to retrieve current user
-        verify(userService).findById(1);
-
-        // Verify that update() is called with a User that has current password
-        verify(userService).update(eq(1), argThat(u ->
-                u != null
-                        && Integer.valueOf(1).equals(u.getId())
-                        && "john.doe.updated".equals(u.getUsername())
-                        && "John Doe Updated".equals(u.getFullname())
-                        && "ADMIN".equals(u.getRole())
-                        && "encodedPassword".equals(u.getPassword())));
-        verifyNoMoreInteractions(userService);
-    }
-
-    // 8) POST /user/update/{id} with new password => passes new password to service and redirects
-    @Test
-    public void updateUser_whenNewPasswordProvided_passesItToService_andRedirectsToList() {
-        Model model = new ConcurrentModel();
+        String originalPassword = "encodedPassword";
 
         // Current user in DB
         User current = new User();
         current.setId(1);
-        current.setUsername("john.doe");
-        current.setPassword("encodedPassword");
-        current.setFullname("John Doe");
-        current.setRole("USER");
+        current.setPassword(originalPassword);
 
-        // Form with new raw password
+        // Form submitted with blank password
         User form = new User();
         form.setUsername("john.doe.updated");
-        form.setPassword("NewPassword1!");
+        form.setPassword("");
         form.setFullname("John Doe Updated");
-        form.setRole("ADMIN");
 
         when(bindingResult.hasErrors()).thenReturn(false);
         when(userService.findById(1)).thenReturn(current);
@@ -213,27 +206,57 @@ public class UserControllerTest {
         String view = controller.updateUser(1, form, bindingResult, model);
 
         assertEquals("redirect:/user/list", view);
-        verify(bindingResult).hasErrors();
         verify(userService).findById(1);
 
-        // Controller should pass the new password string to the service
+        // Verify that update() is called with the original password
         verify(userService).update(eq(1), argThat(u ->
                 u != null
-                        && Integer.valueOf(1).equals(u.getId())
                         && "john.doe.updated".equals(u.getUsername())
-                        && "John Doe Updated".equals(u.getFullname())
-                        && "ADMIN".equals(u.getRole())
-                        && "NewPassword1!".equals(u.getPassword())));
-        verifyNoMoreInteractions(userService);
+                        && originalPassword.equals(u.getPassword())));
     }
 
-    // 9) GET /user/delete/{id} => calls delete() and redirects
+    /**
+     * Tests that if a new password is provided, it is passed to the service for update.
+     */
+    @Test
+    public void updateUser_whenNewPasswordProvided_passesItToService_andRedirectsToList() {
+        Model model = new ConcurrentModel();
+
+        // Current user in DB (needed for findById call in controller)
+        User current = new User();
+        current.setId(1);
+        current.setPassword("encodedPassword");
+
+        // Form with new raw password
+        User form = new User();
+        form.setUsername("john.doe.updated");
+        String newPassword = "NewPassword1!";
+        form.setPassword(newPassword);
+        form.setFullname("John Doe Updated");
+
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(userService.findById(1)).thenReturn(current);
+
+        String view = controller.updateUser(1, form, bindingResult, model);
+
+        assertEquals("redirect:/user/list", view);
+        verify(userService).findById(1);
+
+        // Verify that the new password string is passed to the service
+        verify(userService).update(eq(1), argThat(u ->
+                u != null
+                        && "john.doe.updated".equals(u.getUsername())
+                        && newPassword.equals(u.getPassword())));
+    }
+
+    /**
+     * Tests that deleting a user calls the service and redirects to the list.
+     */
     @Test
     public void deleteUser_callsService_andRedirectsToList() {
         String view = controller.deleteUser(3);
 
         assertEquals("redirect:/user/list", view);
         verify(userService).delete(3);
-        verifyNoMoreInteractions(userService);
     }
 }

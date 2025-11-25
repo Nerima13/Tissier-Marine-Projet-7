@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CurvePoint.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">springboot</a> &gt; <a href="index.source.html" class="el_package">com.nnk.springboot.domain</a> &gt; <span class="el_source">CurvePoint.java</span></div><h1>CurvePoint.java</h1><pre class="source lang-java linenums">package com.nnk.springboot.domain;
+
+import jakarta.persistence.*;
+
+import java.sql.Timestamp;
+
+@Entity
+@Table(name = &quot;CurvePoint&quot;)
+public class CurvePoint {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = &quot;Id&quot;)
+    private Integer id;
+
+    private Integer curveId;
+
+    private Timestamp asOfDate;
+
+    private Double term;
+
+    private Double value;
+
+    private Timestamp creationDate;
+
+    // Constructors
+<span class="fc" id="L27">    public CurvePoint() {</span>
+<span class="fc" id="L28">    }</span>
+
+    public CurvePoint(Integer id,
+                      Integer curveId,
+                      Timestamp asOfDate,
+                      Double term,
+                      Double value,
+<span class="nc" id="L35">                      Timestamp creationDate) {</span>
+<span class="nc" id="L36">        this.id = id;</span>
+<span class="nc" id="L37">        this.curveId = curveId;</span>
+<span class="nc" id="L38">        this.asOfDate = asOfDate;</span>
+<span class="nc" id="L39">        this.term = term;</span>
+<span class="nc" id="L40">        this.value = value;</span>
+<span class="nc" id="L41">        this.creationDate = creationDate;</span>
+<span class="nc" id="L42">    }</span>
+
+    // Getters / Setters
+    public Integer getId() {
+<span class="fc" id="L46">        return id;</span>
+    }
+
+    public void setId(Integer id) {
+<span class="fc" id="L50">        this.id = id;</span>
+<span class="fc" id="L51">    }</span>
+
+    public Integer getCurveId() {
+<span class="fc" id="L54">        return curveId;</span>
+    }
+
+    public void setCurveId(Integer curveId) {
+<span class="fc" id="L58">        this.curveId = curveId;</span>
+<span class="fc" id="L59">    }</span>
+
+    public Timestamp getAsOfDate() {
+<span class="fc" id="L62">        return asOfDate;</span>
+    }
+
+    public void setAsOfDate(Timestamp asOfDate) {
+<span class="fc" id="L66">        this.asOfDate = asOfDate;</span>
+<span class="fc" id="L67">    }</span>
+
+    public Double getTerm() {
+<span class="fc" id="L70">        return term;</span>
+    }
+
+    public void setTerm(Double term) {
+<span class="fc" id="L74">        this.term = term;</span>
+<span class="fc" id="L75">    }</span>
+
+    public Double getValue() {
+<span class="fc" id="L78">        return value;</span>
+    }
+
+    public void setValue(Double value) {
+<span class="fc" id="L82">        this.value = value;</span>
+<span class="fc" id="L83">    }</span>
+
+    public Timestamp getCreationDate() {
+<span class="fc" id="L86">        return creationDate;</span>
+    }
+
+    public void setCreationDate(Timestamp creationDate) {
+<span class="fc" id="L90">        this.creationDate = creationDate;</span>
+<span class="fc" id="L91">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

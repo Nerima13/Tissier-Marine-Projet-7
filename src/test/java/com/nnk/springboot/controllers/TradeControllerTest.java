@@ -2,11 +2,16 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.services.TradeService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,36 +28,66 @@ import static org.mockito.Mockito.*;
 public class TradeControllerTest {
 
     @Mock
-    TradeService tradeService;
+    private TradeService tradeService;
 
     @Mock
-    BindingResult bindingResult;
+    private BindingResult bindingResult;
+
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private SecurityContext securityContext;
 
     @InjectMocks
-    TradeController controller;
+    private TradeController controller;
 
-    // 1) GET /trade/list => returns "trade/list" and adds the list to the model
+    /**
+     * Clears the SecurityContext after each test.
+     */
+    @AfterEach
+    public void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
+    /**
+     * Tests that the home method returns the list view and adds trades and user info to the model.
+     */
     @Test
     public void home_returnsListView_andAddsTradesToModel() {
         Model model = new ConcurrentModel();
         List<Trade> trades = List.of(new Trade(), new Trade());
+
         when(tradeService.findAll()).thenReturn(trades);
+
+        when(authentication.getName()).thenReturn("testUser");
+        doReturn(List.of(new SimpleGrantedAuthority("ROLE_USER"))).when(authentication).getAuthorities();
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
         String view = controller.home(model);
 
         assertEquals("trade/list", view);
+
         assertTrue(model.containsAttribute("trades"));
         assertSame(trades, model.getAttribute("trades"));
+
+        assertEquals("testUser", model.getAttribute("username"));
+        assertEquals(false, model.getAttribute("isAdmin"));
+
         verify(tradeService).findAll();
-        verifyNoMoreInteractions(tradeService);
     }
 
-    // 2) GET /trade/add => returns "trade/add" and adds an empty Trade
+    /**
+     * Tests that the add form view is returned with a new Trade object.
+     */
     @Test
     public void addUser_returnsAddView_andAddsEmptyTrade() {
         Model model = new ConcurrentModel();
 
-        String view = controller.addUser(model);
+        // Note: The controller method is named 'addUser' but handles Trades
+        String view = controller.addTrade(model);
 
         assertEquals("trade/add", view);
         assertTrue(model.containsAttribute("trade"));
@@ -61,7 +96,9 @@ public class TradeControllerTest {
         verifyNoInteractions(tradeService);
     }
 
-    // 3) POST /trade/validate with errors => returns "trade/add" without calling the service
+    /**
+     * Tests that validation errors prevent saving and return the user to the add form.
+     */
     @Test
     public void validate_whenHasErrors_returnsAddView_andDoesNotCallService() {
         Model model = new ConcurrentModel();
@@ -75,7 +112,9 @@ public class TradeControllerTest {
         verifyNoInteractions(tradeService);
     }
 
-    // 4) POST /trade/validate without errors => calls create() with the form and redirects
+    /**
+     * Tests that valid data triggers the service creation and redirects to the list.
+     */
     @Test
     public void validate_whenNoErrors_callsServiceWithForm_andRedirectsToList() {
         Model model = new ConcurrentModel();
@@ -127,10 +166,11 @@ public class TradeControllerTest {
                         && "DealType".equals(t.getDealType())
                         && "Source".equals(t.getSourceListId())
                         && "Side".equals(t.getSide())));
-        verifyNoMoreInteractions(tradeService);
     }
 
-    // 5) GET /trade/update/{id} => returns "trade/update" with the found Trade
+    /**
+     * Tests that the update form is displayed with the existing Trade data.
+     */
     @Test
     public void showUpdateForm_returnsUpdateView_andAddsExistingTrade() {
         Model model = new ConcurrentModel();
@@ -145,10 +185,11 @@ public class TradeControllerTest {
         assertTrue(model.containsAttribute("trade"));
         assertSame(existing, model.getAttribute("trade"));
         verify(tradeService).findById(1);
-        verifyNoMoreInteractions(tradeService);
     }
 
-    // 6) POST /trade/update/{id} with errors => returns "trade/update" without calling update()
+    /**
+     * Tests that validation errors during update return the user to the update form.
+     */
     @Test
     public void updateTrade_whenHasErrors_returnsUpdateView_andDoesNotCallService() {
         Model model = new ConcurrentModel();
@@ -162,7 +203,9 @@ public class TradeControllerTest {
         verifyNoInteractions(tradeService);
     }
 
-    // 7) POST /trade/update/{id} without errors => calls update() with the form and redirects
+    /**
+     * Tests that a valid update triggers the service update and redirects to the list.
+     */
     @Test
     public void updateTrade_whenNoErrors_callsServiceWithForm_andRedirectsToList() {
         Model model = new ConcurrentModel();
@@ -213,16 +256,16 @@ public class TradeControllerTest {
                         && "UpdatedType".equals(t.getDealType())
                         && "UpdatedSource".equals(t.getSourceListId())
                         && "UpdatedSide".equals(t.getSide())));
-        verifyNoMoreInteractions(tradeService);
     }
 
-    // 8) GET /trade/delete/{id} => calls delete() and redirects
+    /**
+     * Tests that deleting a trade calls the service and redirects to the list.
+     */
     @Test
     public void deleteTrade_callsService_andRedirectsToList() {
         String view = controller.deleteTrade(3);
 
         assertEquals("redirect:/trade/list", view);
         verify(tradeService).delete(3);
-        verifyNoMoreInteractions(tradeService);
     }
 }

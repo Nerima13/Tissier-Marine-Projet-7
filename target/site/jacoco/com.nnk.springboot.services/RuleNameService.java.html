@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RuleNameService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">springboot</a> &gt; <a href="index.source.html" class="el_package">com.nnk.springboot.services</a> &gt; <span class="el_source">RuleNameService.java</span></div><h1>RuleNameService.java</h1><pre class="source lang-java linenums">package com.nnk.springboot.services;
+
+import com.nnk.springboot.domain.RuleName;
+import com.nnk.springboot.repositories.RuleNameRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+/**
+ * Service layer for managing {@link RuleName} entities.
+ * Provides CRUD operations for the RuleName domain.
+ */
+@Service
+public class RuleNameService {
+
+    private final RuleNameRepository repository;
+
+<span class="fc" id="L21">    public RuleNameService(RuleNameRepository repository) {</span>
+<span class="fc" id="L22">        this.repository = repository;</span>
+<span class="fc" id="L23">    }</span>
+
+    /**
+     * Retrieves all RuleName entries.
+     *
+     * @return list of RuleName entities
+     */
+    public List&lt;RuleName&gt; findAll() {
+<span class="fc" id="L31">        return repository.findAll();</span>
+    }
+
+    /**
+     * Retrieves a RuleName by its ID.
+     *
+     * @param id the RuleName ID
+     * @return the corresponding RuleName entity
+     * @throws ResponseStatusException if not found (404)
+     */
+    public RuleName findById(Integer id) {
+<span class="fc" id="L42">        return repository.findById(id)</span>
+<span class="fc" id="L43">                .orElseThrow(() -&gt; new ResponseStatusException(</span>
+                        NOT_FOUND, &quot;RuleName not found with id: &quot; + id));
+    }
+
+    /**
+     * Creates a new RuleName entry.
+     *
+     * @param ruleName the RuleName to create
+     * @return the saved RuleName entity
+     */
+    public RuleName create(RuleName ruleName) {
+<span class="fc" id="L54">        ruleName.setId(null); // ensure creation of a new entry</span>
+<span class="fc" id="L55">        return repository.save(ruleName);</span>
+    }
+
+    /**
+     * Updates an existing RuleName entry.
+     *
+     * @param id the ID of the RuleName to update
+     * @param ruleName the updated RuleName data
+     * @return the updated RuleName entity
+     * @throws ResponseStatusException if the RuleName does not exist
+     */
+    public RuleName update(Integer id, RuleName ruleName) {
+<span class="fc" id="L67">        RuleName existing = findById(id);</span>
+
+<span class="fc" id="L69">        existing.setName(ruleName.getName());</span>
+<span class="fc" id="L70">        existing.setDescription(ruleName.getDescription());</span>
+<span class="fc" id="L71">        existing.setJson(ruleName.getJson());</span>
+<span class="fc" id="L72">        existing.setTemplate(ruleName.getTemplate());</span>
+<span class="fc" id="L73">        existing.setSqlStr(ruleName.getSqlStr());</span>
+<span class="fc" id="L74">        existing.setSqlPart(ruleName.getSqlPart());</span>
+
+<span class="fc" id="L76">        return repository.save(existing);</span>
+    }
+
+    /**
+     * Deletes a RuleName by its ID.
+     *
+     * @param id the ID of the RuleName to delete
+     * @throws ResponseStatusException if the RuleName does not exist
+     */
+    public void delete(Integer id) {
+<span class="fc" id="L86">        RuleName existing = findById(id);</span>
+<span class="fc" id="L87">        repository.delete(existing);</span>
+<span class="fc" id="L88">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

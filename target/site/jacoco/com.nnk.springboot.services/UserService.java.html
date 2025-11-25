@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">springboot</a> &gt; <a href="index.source.html" class="el_package">com.nnk.springboot.services</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package com.nnk.springboot.services;
+
+import com.nnk.springboot.domain.User;
+import com.nnk.springboot.repositories.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.regex.Pattern;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+/**
+ * Service layer for managing {@link User} entities.
+ * Provides CRUD operations and handles password encoding
+ * before persisting users.
+ */
+@Service
+public class UserService {
+
+    private final UserRepository repository;
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
+<span class="fc" id="L26">    private static final Pattern RAW_PASSWORD_PATTERN = Pattern.compile(&quot;^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&amp;#^()_+\\-=])[A-Za-z\\d@$!%*?&amp;#^()_+\\-=]{8,}$&quot;);</span>
+
+<span class="fc" id="L28">    public UserService(UserRepository repository, BCryptPasswordEncoder passwordEncoder) {</span>
+<span class="fc" id="L29">        this.repository = repository;</span>
+<span class="fc" id="L30">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Validates the raw password before encoding and saving.
+     *
+     * @param rawPassword plain text password from the form
+     */
+    private void validateRawPassword(String rawPassword) {
+<span class="pc bpc" id="L39" title="1 of 4 branches missed.">        if (rawPassword == null || !RAW_PASSWORD_PATTERN.matcher(rawPassword).matches()) {</span>
+<span class="fc" id="L40">            throw new IllegalArgumentException(&quot;Password must be at least 8 characters long and include an uppercase letter, a digit, and a special symbol.&quot;);</span>
+        }
+<span class="fc" id="L42">    }</span>
+
+    /**
+     * Retrieves all User entries.
+     *
+     * @return list of User entities
+     */
+    public List&lt;User&gt; findAll() {
+<span class="fc" id="L50">        return repository.findAll();</span>
+    }
+
+    /**
+     * Retrieves a User by its ID.
+     *
+     * @param id the User ID
+     * @return the corresponding User entity
+     * @throws ResponseStatusException if not found (404)
+     */
+    public User findById(Integer id) {
+<span class="fc" id="L61">        return repository.findById(id)</span>
+<span class="fc" id="L62">                .orElseThrow(() -&gt; new ResponseStatusException(</span>
+                        NOT_FOUND, &quot;User not found with id: &quot; + id));
+    }
+
+    /**
+     * Creates a new User and encodes the password before saving.
+     *
+     * @param user the User to create
+     * @return the saved User entity
+     */
+    public User create(User user) {
+<span class="fc" id="L73">        user.setId(null); // ensure creation</span>
+
+        // 1) Validate the raw (plain text) password
+<span class="fc" id="L76">        validateRawPassword(user.getPassword());</span>
+
+        // 2) Encode the password before saving it
+<span class="fc" id="L79">        user.setPassword(passwordEncoder.encode(user.getPassword()));</span>
+
+<span class="fc" id="L81">        return repository.save(user);</span>
+    }
+
+    /**
+     * Updates an existing User and re-encodes the password.
+     *
+     * @param id the ID of the User to update
+     * @param user the updated User data
+     * @return the updated User entity
+     * @throws ResponseStatusException if the User does not exist
+     */
+    public User update(Integer id, User user) {
+<span class="fc" id="L93">        User existing = findById(id);</span>
+
+<span class="fc" id="L95">        existing.setUsername(user.getUsername());</span>
+<span class="fc" id="L96">        existing.setFullname(user.getFullname());</span>
+<span class="fc" id="L97">        existing.setRole(user.getRole());</span>
+
+        // If a new password is provided, validate it and encode it
+<span class="pc bpc" id="L100" title="1 of 4 branches missed.">        if (user.getPassword() != null &amp;&amp; !user.getPassword().isBlank()) {</span>
+<span class="fc" id="L101">            validateRawPassword(user.getPassword());</span>
+<span class="fc" id="L102">            existing.setPassword(passwordEncoder.encode(user.getPassword()));</span>
+        }
+
+<span class="fc" id="L105">        return repository.save(existing);</span>
+    }
+
+    /**
+     * Deletes a User by its ID.
+     *
+     * @param id the ID of the User to delete
+     * @throws ResponseStatusException if the User does not exist
+     */
+    public void delete(Integer id) {
+<span class="fc" id="L115">        User existing = findById(id);</span>
+<span class="fc" id="L116">        repository.delete(existing);</span>
+<span class="fc" id="L117">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

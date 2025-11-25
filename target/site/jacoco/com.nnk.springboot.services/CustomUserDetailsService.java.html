@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomUserDetailsService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">springboot</a> &gt; <a href="index.source.html" class="el_package">com.nnk.springboot.services</a> &gt; <span class="el_source">CustomUserDetailsService.java</span></div><h1>CustomUserDetailsService.java</h1><pre class="source lang-java linenums">package com.nnk.springboot.services;
+
+import com.nnk.springboot.domain.User;
+import com.nnk.springboot.repositories.UserRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * Custom implementation of {@link UserDetailsService} used by Spring Security
+ * to load user information from the database during authentication.
+ *
+ * &lt;p&gt;This service retrieves a {@link User} by username, validates its role,
+ * and converts it into a Spring Security {@link UserDetails} object.&lt;/p&gt;
+ */
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+<span class="fc" id="L26">    public CustomUserDetailsService(UserRepository userRepository) {</span>
+<span class="fc" id="L27">        this.userRepository = userRepository;</span>
+<span class="fc" id="L28">    }</span>
+
+    /**
+     * Loads a user by its username and converts it to a {@link UserDetails} instance.
+     *
+     * @param username the username provided during login
+     * @return the authenticated user's details
+     * @throws UsernameNotFoundException if the user does not exist or has no valid role
+     */
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // Retrieve the user from the database (username must be unique)
+<span class="fc" id="L40">        User user = userRepository.findByUsername(username)</span>
+<span class="fc" id="L41">                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;User not found : &quot; + username));</span>
+
+        // Normalize the role -&gt; Spring expects roles to start with &quot;ROLE_&quot;
+<span class="fc" id="L44">        String rawRole = user.getRole();</span>
+<span class="fc bfc" id="L45" title="All 4 branches covered.">        if (rawRole == null || rawRole.isBlank()) {</span>
+<span class="fc" id="L46">            throw new UsernameNotFoundException(&quot;No role defined for the user : &quot; + username);</span>
+        }
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        String role = rawRole.startsWith(&quot;ROLE_&quot;) ? rawRole : &quot;ROLE_&quot; + rawRole.toUpperCase();</span>
+
+<span class="fc" id="L50">        List&lt;GrantedAuthority&gt; authorities = List.of(new SimpleGrantedAuthority(role));</span>
+
+        // Build the UserDetails object expected by Spring Security
+<span class="fc" id="L53">        return org.springframework.security.core.userdetails.User.builder()</span>
+<span class="fc" id="L54">                .username(user.getUsername())</span>
+<span class="fc" id="L55">                .password(user.getPassword())      // already encrypted with BCrypt in the database</span>
+<span class="fc" id="L56">                .authorities(authorities)          // ex : ROLE_ADMIN / ROLE_USER</span>
+<span class="fc" id="L57">                .accountExpired(false)</span>
+<span class="fc" id="L58">                .accountLocked(false)</span>
+<span class="fc" id="L59">                .credentialsExpired(false)</span>
+<span class="fc" id="L60">                .disabled(false)</span>
+<span class="fc" id="L61">                .build();</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

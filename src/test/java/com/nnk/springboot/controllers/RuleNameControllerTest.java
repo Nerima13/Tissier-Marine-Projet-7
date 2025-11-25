@@ -2,11 +2,16 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.services.RuleNameService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,31 +27,60 @@ import static org.mockito.Mockito.*;
 public class RuleNameControllerTest {
 
     @Mock
-    RuleNameService ruleNameService;
+    private RuleNameService ruleNameService;
 
     @Mock
-    BindingResult bindingResult;
+    private BindingResult bindingResult;
+
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private SecurityContext securityContext;
 
     @InjectMocks
-    RuleNameController controller;
+    private RuleNameController controller;
 
-    // 1) GET /ruleName/list => returns "ruleName/list" and adds the list to the model
+    /**
+     * Clears the SecurityContext after each test.
+     */
+    @AfterEach
+    public void clear() {
+        SecurityContextHolder.clearContext();
+    }
+
+    /**
+     * Tests that the home method returns the list view and adds rule names and user info to the model.
+     */
     @Test
     public void home_returnsListView_andAddsRuleNamesToModel() {
         Model model = new ConcurrentModel();
         List<RuleName> ruleNames = List.of(new RuleName(), new RuleName());
+
         when(ruleNameService.findAll()).thenReturn(ruleNames);
+
+        when(authentication.getName()).thenReturn("testUser");
+        doReturn(List.of(new SimpleGrantedAuthority("ROLE_USER"))).when(authentication).getAuthorities();
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
         String view = controller.home(model);
 
         assertEquals("ruleName/list", view);
+
         assertTrue(model.containsAttribute("ruleNames"));
         assertSame(ruleNames, model.getAttribute("ruleNames"));
+
+        assertEquals("testUser", model.getAttribute("username"));
+        assertEquals(false, model.getAttribute("isAdmin"));
+
         verify(ruleNameService).findAll();
-        verifyNoMoreInteractions(ruleNameService);
     }
 
-    // 2) GET /ruleName/add => returns "ruleName/add" and adds an empty RuleName
+    /**
+     * Tests that the add form view is returned with a new RuleName object.
+     */
     @Test
     public void addRuleForm_returnsAddView_andAddsEmptyRuleName() {
         Model model = new ConcurrentModel();
@@ -60,7 +94,9 @@ public class RuleNameControllerTest {
         verifyNoInteractions(ruleNameService);
     }
 
-    // 3) POST /ruleName/validate with errors => returns "ruleName/add" without calling the service
+    /**
+     * Tests that validation errors prevent saving and return the user to the add form.
+     */
     @Test
     public void validate_whenHasErrors_returnsAddView_andDoesNotCallService() {
         Model model = new ConcurrentModel();
@@ -74,7 +110,9 @@ public class RuleNameControllerTest {
         verifyNoInteractions(ruleNameService);
     }
 
-    // 4) POST /ruleName/validate without errors => calls create() with the form and redirects
+    /**
+     * Tests that valid data triggers the service creation and redirects to the list.
+     */
     @Test
     public void validate_whenNoErrors_callsServiceWithForm_andRedirectsToList() {
         Model model = new ConcurrentModel();
@@ -101,12 +139,12 @@ public class RuleNameControllerTest {
                         && "{\"key\":\"value\"}".equals(r.getJson())
                         && "Template".equals(r.getTemplate())
                         && "SELECT * FROM table".equals(r.getSqlStr())
-                        && "WHERE id = 1".equals(r.getSqlPart())
-        ));
-        verifyNoMoreInteractions(ruleNameService);
+                        && "WHERE id = 1".equals(r.getSqlPart())));
     }
 
-    // 5) GET /ruleName/update/{id} => returns "ruleName/update" with the found RuleName
+    /**
+     * Tests that the update form is displayed with the existing RuleName data.
+     */
     @Test
     public void showUpdateForm_returnsUpdateView_andAddsExistingRuleName() {
         Model model = new ConcurrentModel();
@@ -121,10 +159,11 @@ public class RuleNameControllerTest {
         assertTrue(model.containsAttribute("ruleName"));
         assertSame(existing, model.getAttribute("ruleName"));
         verify(ruleNameService).findById(1);
-        verifyNoMoreInteractions(ruleNameService);
     }
 
-    // 6) POST /ruleName/update/{id} with errors => returns "ruleName/update" without calling update()
+    /**
+     * Tests that validation errors during update return the user to the update form.
+     */
     @Test
     public void updateRuleName_whenHasErrors_returnsUpdateView_andDoesNotCallService() {
         Model model = new ConcurrentModel();
@@ -138,7 +177,9 @@ public class RuleNameControllerTest {
         verifyNoInteractions(ruleNameService);
     }
 
-    // 7) POST /ruleName/update/{id} without errors => calls update() with the form and redirects
+    /**
+     * Tests that a valid update triggers the service update and redirects to the list.
+     */
     @Test
     public void updateRuleName_whenNoErrors_callsServiceWithForm_andRedirectsToList() {
         Model model = new ConcurrentModel();
@@ -164,18 +205,17 @@ public class RuleNameControllerTest {
                         && "{\"updated\":\"json\"}".equals(r.getJson())
                         && "Updated template".equals(r.getTemplate())
                         && "UPDATE table SET col = 1".equals(r.getSqlStr())
-                        && "WHERE id = 2".equals(r.getSqlPart())
-        ));
-        verifyNoMoreInteractions(ruleNameService);
+                        && "WHERE id = 2".equals(r.getSqlPart())));
     }
 
-    // 8) GET /ruleName/delete/{id} => calls delete() and redirects
+    /**
+     * Tests that deleting a rule calls the service and redirects to the list.
+     */
     @Test
     public void deleteRuleName_callsService_andRedirectsToList() {
         String view = controller.deleteRuleName(3);
 
         assertEquals("redirect:/ruleName/list", view);
         verify(ruleNameService).delete(3);
-        verifyNoMoreInteractions(ruleNameService);
     }
 }

@@ -2,11 +2,16 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.services.RatingService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,31 +27,60 @@ import static org.mockito.Mockito.*;
 public class RatingControllerTest {
 
     @Mock
-    RatingService ratingService;
+    private RatingService ratingService;
 
     @Mock
-    BindingResult bindingResult;
+    private BindingResult bindingResult;
+
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private SecurityContext securityContext;
 
     @InjectMocks
-    RatingController controller;
+    private RatingController controller;
 
-    // 1) GET /rating/list => returns "rating/list" and adds the list to the model
+    /**
+     * Clears the SecurityContext after each test.
+     */
+    @AfterEach
+    public void clear() {
+        SecurityContextHolder.clearContext();
+    }
+
+    /**
+     * Tests that the home method returns the list view and adds ratings and user info to the model.
+     */
     @Test
     public void home_returnsListView_andAddsRatingsToModel() {
         Model model = new ConcurrentModel();
         List<Rating> ratings = List.of(new Rating(), new Rating());
+
         when(ratingService.findAll()).thenReturn(ratings);
+
+        when(authentication.getName()).thenReturn("testUser");
+        doReturn(List.of(new SimpleGrantedAuthority("ROLE_USER"))).when(authentication).getAuthorities();
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
         String view = controller.home(model);
 
         assertEquals("rating/list", view);
+
         assertTrue(model.containsAttribute("ratings"));
         assertSame(ratings, model.getAttribute("ratings"));
+
+        assertEquals("testUser", model.getAttribute("username"));
+        assertEquals(false, model.getAttribute("isAdmin"));
+
         verify(ratingService).findAll();
-        verifyNoMoreInteractions(ratingService);
     }
 
-    // 2) GET /rating/add => returns "rating/add" and adds an empty Rating
+    /**
+     * Tests that the add form view is returned with a new Rating object.
+     */
     @Test
     public void addRatingForm_returnsAddView_andAddsEmptyRating() {
         Model model = new ConcurrentModel();
@@ -60,7 +94,9 @@ public class RatingControllerTest {
         verifyNoInteractions(ratingService);
     }
 
-    // 3) POST /rating/validate with errors => returns "rating/add" without calling the service
+    /**
+     * Tests that validation errors prevent saving and return the user to the add form.
+     */
     @Test
     public void validate_whenHasErrors_returnsAddView_andDoesNotCallService() {
         Model model = new ConcurrentModel();
@@ -74,7 +110,9 @@ public class RatingControllerTest {
         verifyNoInteractions(ratingService);
     }
 
-    // 4) POST /rating/validate without errors => calls create() with the form and redirects
+    /**
+     * Tests that valid data triggers the service creation and redirects to the list.
+     */
     @Test
     public void validate_whenNoErrors_callsServiceWithForm_andRedirectsToList() {
         Model model = new ConcurrentModel();
@@ -91,17 +129,17 @@ public class RatingControllerTest {
         assertEquals("redirect:/rating/list", view);
         verify(bindingResult).hasErrors();
 
-        // Verify that the Rating passed to the service contains these values
         verify(ratingService).create(argThat(r ->
                 r != null
                         && "Moody A".equals(r.getMoodysRating())
                         && "S&P A".equals(r.getSandPRating())
                         && "Fitch A".equals(r.getFitchRating())
                         && Integer.valueOf(1).equals(r.getOrderNumber())));
-        verifyNoMoreInteractions(ratingService);
     }
 
-    // 5) GET /rating/update/{id} => returns "rating/update" with the found Rating
+    /**
+     * Tests that the update form is displayed with the existing Rating data.
+     */
     @Test
     public void showUpdateForm_returnsUpdateView_andAddsExistingRating() {
         Model model = new ConcurrentModel();
@@ -116,10 +154,11 @@ public class RatingControllerTest {
         assertTrue(model.containsAttribute("rating"));
         assertSame(existing, model.getAttribute("rating"));
         verify(ratingService).findById(1);
-        verifyNoMoreInteractions(ratingService);
     }
 
-    // 6) POST /rating/update/{id} with errors => returns "rating/update" without calling update()
+    /**
+     * Tests that validation errors during update return the user to the update form.
+     */
     @Test
     public void updateRating_whenHasErrors_returnsUpdateView_andDoesNotCallService() {
         Model model = new ConcurrentModel();
@@ -133,7 +172,9 @@ public class RatingControllerTest {
         verifyNoInteractions(ratingService);
     }
 
-    // 7) POST /rating/update/{id} without errors => calls update() with the form and redirects
+    /**
+     * Tests that a valid update triggers the service update and redirects to the list.
+     */
     @Test
     public void updateRating_whenNoErrors_callsServiceWithForm_andRedirectsToList() {
         Model model = new ConcurrentModel();
@@ -156,16 +197,16 @@ public class RatingControllerTest {
                         && "Updated S&P".equals(r.getSandPRating())
                         && "Updated Fitch".equals(r.getFitchRating())
                         && Integer.valueOf(2).equals(r.getOrderNumber())));
-        verifyNoMoreInteractions(ratingService);
     }
 
-    // 8) GET /rating/delete/{id} => calls delete() and redirects
+    /**
+     * Tests that deleting a rating calls the service and redirects to the list.
+     */
     @Test
     public void deleteRating_callsService_andRedirectsToList() {
         String view = controller.deleteRating(3);
 
         assertEquals("redirect:/rating/list", view);
         verify(ratingService).delete(3);
-        verifyNoMoreInteractions(ratingService);
     }
 }

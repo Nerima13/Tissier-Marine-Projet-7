@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">springboot</a> &gt; <a href="index.source.html" class="el_package">com.nnk.springboot.controllers</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package com.nnk.springboot.controllers;
+
+import com.nnk.springboot.domain.User;
+import com.nnk.springboot.services.UserService;
+import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+public class UserController {
+
+    private final UserService userService;
+
+<span class="fc" id="L18">    public UserController(UserService userService) {</span>
+<span class="fc" id="L19">        this.userService = userService;</span>
+<span class="fc" id="L20">    }</span>
+
+    @RequestMapping(&quot;/user/list&quot;)
+    public String home(Model model) {
+<span class="fc" id="L24">        model.addAttribute(&quot;users&quot;, userService.findAll());</span>
+
+        // Retrieve the logged-in user's authentication
+<span class="fc" id="L27">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+
+        // Username for display
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        String username = (authentication != null) ? authentication.getName() : &quot;anonymous&quot;;</span>
+<span class="fc" id="L31">        model.addAttribute(&quot;username&quot;, username);</span>
+
+        // Check if the logged-in user has ADMIN role
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        boolean isAdmin = authentication != null &amp;&amp;</span>
+<span class="nc" id="L35">                authentication.getAuthorities().stream()</span>
+<span class="pc bnc" id="L36" title="All 2 branches missed.">                        .anyMatch(a -&gt; &quot;ROLE_ADMIN&quot;.equals(a.getAuthority()));</span>
+<span class="fc" id="L37">        model.addAttribute(&quot;isAdmin&quot;, isAdmin);</span>
+
+<span class="fc" id="L39">        return &quot;user/list&quot;;</span>
+    }
+
+    @GetMapping(&quot;/user/add&quot;)
+    public String addUser(Model model) {
+<span class="fc" id="L44">        model.addAttribute(&quot;user&quot;, new User());</span>
+<span class="fc" id="L45">        return &quot;user/add&quot;;</span>
+    }
+
+    @PostMapping(&quot;/user/validate&quot;)
+    public String validate(@Valid @ModelAttribute(&quot;user&quot;) User user,
+                           BindingResult result,
+                           Model model) {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (result.hasErrors()) {</span>
+<span class="fc" id="L53">            return &quot;user/add&quot;;</span>
+        }
+
+<span class="fc" id="L56">        userService.create(user);</span>
+<span class="fc" id="L57">        return &quot;redirect:/user/list&quot;;</span>
+    }
+
+    @GetMapping(&quot;/user/update/{id}&quot;)
+    public String showUpdateForm(@PathVariable(&quot;id&quot;) Integer id, Model model) {
+<span class="fc" id="L62">        User existing = userService.findById(id);</span>
+
+<span class="fc" id="L64">        existing.setPassword(&quot;&quot;);</span>
+<span class="fc" id="L65">        model.addAttribute(&quot;user&quot;, existing);</span>
+<span class="fc" id="L66">        return &quot;user/update&quot;;</span>
+    }
+
+    @PostMapping(&quot;/user/update/{id}&quot;)
+    public String updateUser(@PathVariable(&quot;id&quot;) Integer id,
+                             @Valid @ModelAttribute(&quot;user&quot;) User user,
+                             BindingResult result,
+                             Model model) {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (result.hasErrors()) {</span>
+<span class="fc" id="L75">            return &quot;user/update&quot;;</span>
+        }
+
+<span class="fc" id="L78">        User current = userService.findById(id);</span>
+
+<span class="pc bpc" id="L80" title="1 of 4 branches missed.">        if (user.getPassword() == null || user.getPassword().isBlank()) {</span>
+<span class="fc" id="L81">            user.setPassword(current.getPassword());</span>
+        }
+
+<span class="fc" id="L84">        user.setId(id);</span>
+<span class="fc" id="L85">        userService.update(id, user);</span>
+<span class="fc" id="L86">        return &quot;redirect:/user/list&quot;;</span>
+    }
+
+    @GetMapping(&quot;/user/delete/{id}&quot;)
+    public String deleteUser(@PathVariable(&quot;id&quot;) Integer id) {
+<span class="fc" id="L91">        userService.delete(id);</span>
+<span class="fc" id="L92">        return &quot;redirect:/user/list&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

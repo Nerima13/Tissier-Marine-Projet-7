@@ -56,7 +56,7 @@ public class TradeController {
      * @return the add form view
      */
     @GetMapping("/trade/add")
-    public String addUser(Model model) {
+    public String addTrade(Model model) {
         model.addAttribute("trade", new Trade());
         return "trade/add";
     }
