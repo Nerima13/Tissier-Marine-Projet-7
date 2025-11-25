@@ -43,8 +43,8 @@ public class RatingController {
 
         // Check if the logged-in user has ADMIN role
 <span class="pc bpc" id="L45" title="1 of 2 branches missed.">        boolean isAdmin = authentication != null &amp;&amp;</span>
-<span class="nc" id="L46">                authentication.getAuthorities().stream()</span>
-<span class="pc bnc" id="L47" title="All 2 branches missed.">                        .anyMatch(a -&gt; &quot;ROLE_ADMIN&quot;.equals(a.getAuthority()));</span>
+<span class="fc" id="L46">                authentication.getAuthorities().stream()</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">                        .anyMatch(a -&gt; &quot;ROLE_ADMIN&quot;.equals(a.getAuthority()));</span>
 <span class="fc" id="L48">        model.addAttribute(&quot;isAdmin&quot;, isAdmin);</span>
 
 <span class="fc" id="L50">        return &quot;rating/list&quot;;</span>

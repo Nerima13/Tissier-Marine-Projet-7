@@ -19,9 +19,9 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
-<span class="nc" id="L22">    public SecurityConfig(UserDetailsService userDetailsService) {</span>
-<span class="nc" id="L23">        this.userDetailsService = userDetailsService;</span>
-<span class="nc" id="L24">    }</span>
+<span class="fc" id="L22">    public SecurityConfig(UserDetailsService userDetailsService) {</span>
+<span class="fc" id="L23">        this.userDetailsService = userDetailsService;</span>
+<span class="fc" id="L24">    }</span>
 
     /**
      * Configures HTTP security: public routes, admin restrictions,
@@ -33,24 +33,24 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-<span class="nc" id="L36">        http</span>
-<span class="nc" id="L37">                .authorizeHttpRequests(auth -&gt; auth</span>
-<span class="nc" id="L38">                        .requestMatchers(&quot;/&quot;, &quot;/login&quot;, &quot;/error&quot;, &quot;/css/**&quot;, &quot;/js/**&quot;, &quot;/images/**&quot;).permitAll()</span>
-<span class="nc" id="L39">                        .requestMatchers(&quot;/user/**&quot;).hasRole(&quot;ADMIN&quot;)</span>
-<span class="nc" id="L40">                        .anyRequest().authenticated())</span>
+<span class="fc" id="L36">        http</span>
+<span class="fc" id="L37">                .authorizeHttpRequests(auth -&gt; auth</span>
+<span class="fc" id="L38">                        .requestMatchers(&quot;/&quot;, &quot;/login&quot;, &quot;/error&quot;, &quot;/css/**&quot;, &quot;/js/**&quot;, &quot;/images/**&quot;).permitAll()</span>
+<span class="fc" id="L39">                        .requestMatchers(&quot;/user/**&quot;).hasRole(&quot;ADMIN&quot;)</span>
+<span class="fc" id="L40">                        .anyRequest().authenticated())</span>
 
-<span class="nc" id="L42">                .formLogin(form -&gt; form</span>
-<span class="nc" id="L43">                        .loginPage(&quot;/login&quot;)</span>
-<span class="nc" id="L44">                        .loginProcessingUrl(&quot;/login&quot;)</span>
-<span class="nc" id="L45">                        .defaultSuccessUrl(&quot;/bidList/list&quot;, true)</span>
-<span class="nc" id="L46">                        .permitAll())</span>
+<span class="fc" id="L42">                .formLogin(form -&gt; form</span>
+<span class="fc" id="L43">                        .loginPage(&quot;/login&quot;)</span>
+<span class="fc" id="L44">                        .loginProcessingUrl(&quot;/login&quot;)</span>
+<span class="fc" id="L45">                        .defaultSuccessUrl(&quot;/bidList/list&quot;, true)</span>
+<span class="fc" id="L46">                        .permitAll())</span>
 
-<span class="nc" id="L48">                .logout(logout -&gt; logout</span>
-<span class="nc" id="L49">                        .logoutUrl(&quot;/logout&quot;)</span>
-<span class="nc" id="L50">                        .logoutSuccessUrl(&quot;/login?logout&quot;)</span>
-<span class="nc" id="L51">                        .permitAll());</span>
+<span class="fc" id="L48">                .logout(logout -&gt; logout</span>
+<span class="fc" id="L49">                        .logoutUrl(&quot;/logout&quot;)</span>
+<span class="fc" id="L50">                        .logoutSuccessUrl(&quot;/login?logout&quot;)</span>
+<span class="fc" id="L51">                        .permitAll());</span>
 
-<span class="nc" id="L53">        return http.build();</span>
+<span class="fc" id="L53">        return http.build();</span>
     }
 
     /**
@@ -60,7 +60,7 @@ public class SecurityConfig {
      */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-<span class="nc" id="L63">        return new BCryptPasswordEncoder();</span>
+<span class="fc" id="L63">        return new BCryptPasswordEncoder();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

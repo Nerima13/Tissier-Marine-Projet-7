@@ -14,9 +14,9 @@ public class LoginController {
 
     private final UserService userService;
 
-<span class="nc" id="L17">    public LoginController(UserService userService) {</span>
-<span class="nc" id="L18">        this.userService = userService;</span>
-<span class="nc" id="L19">    }</span>
+<span class="fc" id="L17">    public LoginController(UserService userService) {</span>
+<span class="fc" id="L18">        this.userService = userService;</span>
+<span class="fc" id="L19">    }</span>
 
     /**
      * Displays the login page.
@@ -25,7 +25,7 @@ public class LoginController {
      */
     @GetMapping(&quot;/login&quot;)
     public ModelAndView login() {
-<span class="nc" id="L28">        return new ModelAndView(&quot;login&quot;);</span>
+<span class="fc" id="L28">        return new ModelAndView(&quot;login&quot;);</span>
     }
 
     /**
