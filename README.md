@@ -1,27 +1,150 @@
-# spring-boot
-## Technical:
+## Stack Technique
 
-1. Spring Boot 3.1.0
-2. Java 17
-3. Thymeleaf
-4. Bootstrap v.4.3.1
+• Java 24
+
+• Spring Boot 3.5.7
+
+• Spring MVC / Web
+
+• Spring Data JPA + MySQL
+
+• Spring Security (authentification + hashage BCrypt)
+
+• Thymeleaf pour l’interface
+
+• Bootstrap 5 pour la mise en forme
+
+• Maven pour la gestion du projet
+
+• JUnit 5, Mockito pour les tests
+
+• Surefire et JaCoCo pour les rapports
 
 
-## Setup with Intellij IDE
-1. Create project from Initializr: File > New > project > Spring Initializr
-2. Add lib repository into pom.xml
-3. Add folders
-    - Source root: src/main/java
-    - View: src/main/resources
-    - Static: src/main/resource/static
-4. Create database with name "demo" as configuration in application.properties
-5. Run sql script to create table doc/data.sql
 
-## Implement a Feature
-1. Create mapping domain class and place in package com.nnk.springboot.domain
-2. Create repository class and place in package com.nnk.springboot.repositories
-3. Create controller class and place in package com.nnk.springboot.controllers
+## Structure du projet
 
-## Security
-1. Create user service to load user from  database and place in package com.nnk.springboot.services
-2. Add configuration class and place in package com.nnk.springboot.config
+Tissier-Marine-Projet-7/
+
+├── src/main/java/com/nnk/springboot/
+
+│ ├── controllers/
+
+│ ├── domain/
+
+│ ├── repositories/
+
+│ ├── services/
+
+│ ├── config/
+
+│ └── PoseidonApplication.java
+
+├── src/main/resources/
+
+│ ├── templates/ (vues Thymeleaf)
+
+│ └── application.properties
+
+├── src/test/java/com/nnk/springboot/ (tests unitaires)
+
+├── target/ (dossier généré par Maven)
+
+├── report/ (captures d’exécution)
+
+└── pom.xml
+
+
+
+## Fonctionnalités principales
+
+CRUD complet pour :
+
+* BidList
+* CurvePoint
+* Rating
+* RuleName
+* Trade
+* User (accès limité aux ADMIN)
+
+
+
+Chaque entité possède :
+
+* Un controller
+* Un service métier
+* Un repository JPA
+* Des vues Thymeleaf (list, add, update)
+
+
+
+## Sécurité
+
+• Authentification basée sur une session
+
+• Gestion des utilisateurs avec rôle (ADMIN / USER)
+
+• Mot de passe hashé avec BCryptPasswordEncoder
+
+• Accès filtré via Spring Security + SecurityFilterChain
+
+
+
+## Tests
+
+1. **Rapport d'exécution en captures d'écran**
+
+Dossier : report/
+
+Ce dossier contient toutes mes captures d'exécution montrant le bon fonctionnement de l'application.
+
+
+
+**2. Rapport JaCoCo**
+
+Dossier : target/site/jacoco/index.html
+
+Contient : 
+
+* Pourcentage de couverture
+* Détails par classe / package
+
+
+
+**3. Rapport Surefire**
+
+Dossier : target/reports/surefire.html
+
+Montre :
+
+* Résultats des tests
+* Réussites / échecs
+
+
+
+## Lancer le projet
+
+1. **Configurer la base de données MySQL**
+
+Modifier application.properties :
+
+spring.datasource.url=jdbc:mysql://localhost:3306/demo
+
+spring.datasource.username=root
+
+spring.datasource.password=xxxx
+
+spring.jpa.hibernate.ddl-auto=update
+
+
+
+**2. Lancer avec Maven**
+
+mvn spring-boot:run
+
+
+
+**3. Accéder à l'application**
+
+http://localhost:8080/
+
